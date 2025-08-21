@@ -34,15 +34,15 @@ const prompt = ai.definePrompt({
   name: 'diagnosisAssistantPrompt',
   input: {schema: DiagnosisAssistantInputSchema},
   output: {schema: DiagnosisAssistantOutputSchema},
-  prompt: `You are an AI-assisted tool to help healthcare professionals generate more accurate diagnoses.
+  prompt: `Eres una herramienta de asistencia por IA para ayudar a los profesionales de la salud a generar diagnósticos más precisos.
 
-  Based on the symptoms, medical history, and other relevant information provided, suggest a list of possible diagnoses, confidence levels for each diagnosis, and additional tests that may be helpful in confirming the diagnosis.
+  Basándote en los síntomas, el historial médico y otra información relevante proporcionada, sugiere una lista de posibles diagnósticos, los niveles de confianza para cada uno y las pruebas adicionales que podrían ser útiles para confirmar el diagnóstico. Todas tus respuestas deben estar en español.
 
-  Symptoms: {{{symptoms}}}
-  Medical History: {{{medicalHistory}}}
-  Other Relevant Information: {{{otherRelevantInformation}}}
+  Síntomas: {{{symptoms}}}
+  Historial Médico: {{{medicalHistory}}}
+  Otra Información Relevante: {{{otherRelevantInformation}}}
 
-  Provide the output in a structured format.
+  Proporciona la salida en un formato estructurado.
   `,
 });
 
