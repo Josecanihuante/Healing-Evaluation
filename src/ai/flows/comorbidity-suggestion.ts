@@ -31,7 +31,7 @@ const prompt = ai.definePrompt({
   name: 'suggestComorbiditiesPrompt',
   input: {schema: SuggestComorbiditiesInputSchema},
   output: {schema: SuggestComorbiditiesOutputSchema},
-  prompt: `You are an expert medical assistant. Given a patient's primary diagnosis, you will suggest potential comorbidities that the patient may also have. Provide a list of comorbidities related to the following diagnosis:\n\nDiagnosis: {{{diagnosis}}}`,
+  prompt: `Eres un asistente médico experto. Dado el diagnóstico principal de un paciente, sugerirás posibles comorbilidades que el paciente también pueda tener. Proporciona una lista de comorbilidades relacionadas con el siguiente diagnóstico. Todas tus respuestas deben estar en español.\n\nDiagnóstico: {{{diagnosis}}}`,
 });
 
 const suggestComorbiditiesFlow = ai.defineFlow(
