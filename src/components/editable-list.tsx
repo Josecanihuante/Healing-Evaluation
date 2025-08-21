@@ -2,14 +2,14 @@
 
 import { useState } from 'react';
 import { useFormContext, useFieldArray } from 'react-hook-form';
-import type { PatientFormValues } from './add-patient-form'; // Asegúrate que esta ruta es correcta y el tipo es exportado
+import type { PatientFormValues } from './add-patient-form';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { CirclePlus, Trash2 } from 'lucide-react';
 
 interface EditableListProps {
-  name: "comorbidities" | "medications" | "treatments" | "surgicalProcedures" | "supplies" | "treatingPhysicians";
+  name: "comorbidities" | "medications" | "treatments" | "surgicalProcedures" | "supplies";
   title: string;
   icon: React.ElementType;
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { type Patient, type Evaluation } from '@/lib/types';
+import { type Patient, type Evaluation, type TreatingPhysician } from '@/lib/types';
 import { useRouter } from 'next/navigation';
 import {
   Card,
@@ -49,6 +49,30 @@ const ListCard = ({ title, items, icon: Icon }: { title: string, items: string[]
                         <li key={index} className="flex items-center gap-2 text-sm">
                             <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground" />
                             <span>{item}</span>
+                        </li>
+                    ))}
+                </ul>
+            </CardContent>
+        </Card>
+    );
+};
+
+const PhysicianListCard = ({ title, items, icon: Icon }: { title: string, items: TreatingPhysician[] | undefined, icon: React.ElementType }) => {
+    if (!items || items.length === 0) return null;
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg"><Icon className="w-5 h-5 text-primary" />{title}</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <ul className="space-y-3">
+                    {items.map((item, index) => (
+                        <li key={index} className="flex items-baseline gap-2 text-sm">
+                            <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground mt-2" />
+                            <div>
+                                <span className="font-semibold">{item.name}</span>
+                                <p className="text-xs text-muted-foreground">{item.specialty}</p>
+                            </div>
                         </li>
                     ))}
                 </ul>
@@ -175,7 +199,7 @@ export default function PatientDetailView({ patient }: PatientDetailViewProps) {
                         <DetailRow label="Enfermero Supervisor" value={patient.supervisingNurse} />
                     </CardContent>
                 </Card>
-                <ListCard title="Médico(s) Tratante(s)" items={patient.treatingPhysicians} icon={Stethoscope} />
+                <PhysicianListCard title="Médico(s) Tratante(s)" items={patient.treatingPhysicians} icon={Stethoscope} />
                 <ListCard title="Comorbilidades" items={patient.comorbidities} icon={ShieldPlus} />
                 <ListCard title="Medicamentos" items={patient.medications} icon={Pill} />
                 <ListCard title="Tratamientos" items={patient.treatments} icon={Activity} />

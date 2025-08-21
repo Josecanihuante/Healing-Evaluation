@@ -8,6 +8,11 @@ export interface Evaluation {
   dateEvaluated: string; // ISO string
 }
 
+export interface TreatingPhysician {
+  name: string;
+  specialty: string;
+}
+
 export interface Patient {
   id: string;
   name: string;
@@ -20,7 +25,7 @@ export interface Patient {
   bedType: string;
   bedNumber: string;
   evaluations: Evaluation[];
-  treatingPhysicians: string[];
+  treatingPhysicians: TreatingPhysician[];
   nurseInCharge: string;
   supervisingNurse: string;
 }

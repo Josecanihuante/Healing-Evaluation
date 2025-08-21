@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { User, Stethoscope, Bed, ShieldPlus, Pill, Activity, Box } from "lucide-react";
 import { EditableList } from "./editable-list";
+import { EditablePhysicianList } from "./editable-physician-list";
 
 
 const formSchema = z.object({
@@ -26,7 +27,7 @@ const formSchema = z.object({
   treatments: z.array(z.object({ value: z.string() })),
   surgicalProcedures: z.array(z.object({ value: z.string() })),
   supplies: z.array(z.object({ value: z.string() })),
-  treatingPhysicians: z.array(z.object({ value: z.string() })),
+  treatingPhysicians: z.array(z.object({ name: z.string(), specialty: z.string() })),
   nurseInCharge: z.string(),
   supervisingNurse: z.string(),
 });
@@ -54,7 +55,7 @@ export function EditPatientForm({ patient }: EditPatientFormProps) {
       treatments: patient.treatments.map(value => ({ value })) || [],
       surgicalProcedures: patient.surgicalProcedures.map(value => ({ value })) || [],
       supplies: patient.supplies.map(value => ({ value })) || [],
-      treatingPhysicians: patient.treatingPhysicians?.map(value => ({ value })) || [],
+      treatingPhysicians: patient.treatingPhysicians || [],
       nurseInCharge: patient.nurseInCharge || "",
       supervisingNurse: patient.supervisingNurse || "",
     },
@@ -73,7 +74,7 @@ export function EditPatientForm({ patient }: EditPatientFormProps) {
         treatments: values.treatments.map(i => i.value),
         surgicalProcedures: values.surgicalProcedures.map(i => i.value),
         supplies: values.supplies.map(i => i.value),
-        treatingPhysicians: values.treatingPhysicians.map(i => i.value),
+        treatingPhysicians: values.treatingPhysicians,
         nurseInCharge: values.nurseInCharge,
         supervisingNurse: values.supervisingNurse,
       };
@@ -208,7 +209,7 @@ export function EditPatientForm({ patient }: EditPatientFormProps) {
                 )}
               />
             </div>
-             <EditableList name="treatingPhysicians" title="Médico(s) Tratante(s)" icon={Stethoscope} />
+             <EditablePhysicianList />
           </CardContent>
         </Card>
 

@@ -16,6 +16,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Lightbulb, Loader2, User, Stethoscope, Bed, ShieldPlus, Pill, Activity, Box } from 'lucide-react';
 import DiagnosisAssistantDialog from './diagnosis-assistant-dialog';
 import { EditableList } from './editable-list';
+import { EditablePhysicianList } from './editable-physician-list';
 
 const patientSchema = z.object({
   name: z.string().min(1, 'El nombre del paciente es requerido.'),
@@ -27,7 +28,7 @@ const patientSchema = z.object({
   supplies: z.array(z.object({ value: z.string() })),
   bedType: z.string(),
   bedNumber: z.string(),
-  treatingPhysicians: z.array(z.object({ value: z.string() })),
+  treatingPhysicians: z.array(z.object({ name: z.string(), specialty: z.string() })),
   nurseInCharge: z.string(),
   supervisingNurse: z.string(),
 });
@@ -97,7 +98,7 @@ const AddPatientFormContent = () => {
       surgicalProcedures: data.surgicalProcedures.map(i => i.value),
       supplies: data.supplies.map(i => i.value),
       evaluations: [],
-      treatingPhysicians: data.treatingPhysicians.map(i => i.value),
+      treatingPhysicians: data.treatingPhysicians,
       nurseInCharge: data.nurseInCharge,
       supervisingNurse: data.supervisingNurse,
     };
@@ -228,7 +229,7 @@ const AddPatientFormContent = () => {
                 )}
               />
             </div>
-             <EditableList name="treatingPhysicians" title="Médico(s) Tratante(s)" icon={Stethoscope} />
+             <EditablePhysicianList />
           </CardContent>
         </Card>
 
