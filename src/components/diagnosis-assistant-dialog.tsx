@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -13,7 +13,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Sparkles, Wand2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Badge } from './ui/badge';
+import { type PatientFormValues } from './add-patient-form';
 
 const diagnosisSchema = z.object({
   symptoms: z.string().min(10, 'Please provide detailed symptoms.'),
@@ -24,10 +24,11 @@ const diagnosisSchema = z.object({
 type DiagnosisFormValues = z.infer<typeof diagnosisSchema>;
 
 interface DiagnosisAssistantDialogProps {
+  currentValues: PatientFormValues;
   setDiagnosis: (diagnosis: string) => void;
 }
 
-export default function DiagnosisAssistantDialog({ setDiagnosis }: DiagnosisAssistantDialogProps) {
+export default function DiagnosisAssistantDialog({ currentValues, setDiagnosis }: DiagnosisAssistantDialogProps) {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<DiagnosisAssistantOutput | null>(null);
@@ -41,6 +42,13 @@ export default function DiagnosisAssistantDialog({ setDiagnosis }: DiagnosisAssi
       otherRelevantInformation: '',
     },
   });
+
+  useEffect(() => {
+    if (isOpen) {
+        form.setValue('symptoms', currentValues.diagnosis || '');
+    }
+  }, [isOpen, currentValues, form]);
+
 
   async function onSubmit(data: DiagnosisFormValues) {
     setIsLoading(true);
@@ -69,14 +77,17 @@ export default function DiagnosisAssistantDialog({ setDiagnosis }: DiagnosisAssi
     });
   }
 
-  const resetDialog = () => {
-    form.reset();
-    setResult(null);
-    setIsLoading(false);
+  const resetDialog = (open: boolean) => {
+    if (!open) {
+      form.reset();
+      setResult(null);
+      setIsLoading(false);
+    }
+    setIsOpen(open);
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => { if(!open) resetDialog(); setIsOpen(open); }}>
+    <Dialog open={isOpen} onOpenChange={resetDialog}>
       <DialogTrigger asChild>
         <Button type="button" variant="outline">
           <Wand2 className="mr-2 h-4 w-4" />
@@ -102,9 +113,9 @@ export default function DiagnosisAssistantDialog({ setDiagnosis }: DiagnosisAssi
                 name="symptoms"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Symptoms</FormLabel>
+                    <FormLabel>Symptoms or Current Diagnosis</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="e.g., Persistent cough, fever, shortness of breath..." {...field} />
+                      <Textarea placeholder="e.g., Persistent cough, fever, shortness of breath... or a working diagnosis" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -149,9 +160,8 @@ export default function DiagnosisAssistantDialog({ setDiagnosis }: DiagnosisAssi
             <Card>
               <CardHeader><CardTitle>Suggested Diagnoses</CardTitle></CardHeader>
               <CardContent>
-                <p>{result.suggestedDiagnoses}</p>
-                <div className="flex gap-2 mt-2">
-                  {result.suggestedDiagnoses.split(',').map(d => d.trim()).map(diag => (
+                <div className="flex flex-wrap gap-2">
+                  {result.suggestedDiagnoses.split(',').map(d => d.trim()).filter(Boolean).map(diag => (
                     <Button key={diag} size="sm" variant="secondary" onClick={() => handleUseDiagnosis(diag)}>Use "{diag}"</Button>
                   ))}
                 </div>
@@ -170,7 +180,7 @@ export default function DiagnosisAssistantDialog({ setDiagnosis }: DiagnosisAssi
               </CardContent>
             </Card>
             <DialogFooter>
-                <Button variant="outline" onClick={resetDialog}>Start Over</Button>
+                <Button variant="outline" onClick={() => setResult(null)}>Back</Button>
                 <DialogClose asChild>
                     <Button type="button">Close</Button>
                 </DialogClose>

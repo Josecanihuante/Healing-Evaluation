@@ -28,15 +28,15 @@ const patientSchema = z.object({
   bedNumber: z.string(),
 });
 
-type PatientFormValues = z.infer<typeof patientSchema>;
+export type PatientFormValues = z.infer<typeof patientSchema>;
 
-const EditableList = ({ control, name, title, icon: Icon }: { control: any, name: keyof PatientFormValues, title: string, icon: React.ElementType }) => {
+const EditableList = ({ control, name, title, icon: Icon }: { control: any, name: keyof Omit<PatientFormValues, 'name' | 'diagnosis' | 'bedType' | 'bedNumber'>, title: string, icon: React.ElementType }) => {
   const { fields, append, remove } = useFieldArray({ control, name });
   const [inputValue, setInputValue] = useState('');
 
   const handleAdd = () => {
     if (inputValue.trim()) {
-      append(inputValue.trim());
+      append(inputValue.trim() as never);
       setInputValue('');
     }
   };
@@ -63,7 +63,7 @@ const EditableList = ({ control, name, title, icon: Icon }: { control: any, name
         <div className="flex flex-wrap gap-2">
           {fields.map((field, index) => (
             <div key={field.id} className="flex items-center gap-1 bg-secondary text-secondary-foreground rounded-full px-3 py-1 text-sm">
-              <span>{field.value}</span>
+              <span>{field.value as string}</span>
               <button type="button" onClick={() => remove(index)} className="text-muted-foreground hover:text-destructive">
                 <Trash2 className="w-3 h-3" />
               </button>
@@ -100,6 +100,7 @@ export default function AddPatientForm() {
 
   const { control, watch } = form;
   const diagnosis = watch('diagnosis');
+  const formValues = watch();
 
   const handleSuggestComorbidities = async () => {
     if (!diagnosis) {
@@ -174,7 +175,10 @@ export default function AddPatientForm() {
                             <Stethoscope className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                             <Input placeholder="e.g., Type 2 Diabetes" {...field} className="pl-10" />
                         </div>
-                        <DiagnosisAssistantDialog setDiagnosis={(value) => form.setValue('diagnosis', value, { shouldValidate: true })} />
+                        <DiagnosisAssistantDialog 
+                            currentValues={formValues}
+                            setDiagnosis={(value) => form.setValue('diagnosis', value, { shouldValidate: true })} 
+                        />
                     </div>
                   <FormMessage />
                 </FormItem>
