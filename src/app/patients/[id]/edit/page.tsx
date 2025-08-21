@@ -2,62 +2,60 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import EditPatientForm from '@/components/edit-patient-form';
+import { EditPatientForm } from '@/components/edit-patient-form';
+import { usePatientContext } from '@/context/PatientContext';
 import { Patient } from '@/lib/types';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 const PatientEditPage = () => {
   const params = useParams();
-  const patientId = params.id as string; // Assuming the ID is a string
+  const patientId = params.id as string;
+  const { state } = usePatientContext();
   const [patient, setPatient] = useState<Patient | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchPatient = async () => {
-      try {
-        // Placeholder function to fetch patient data
-        // Replace with your actual data fetching logic (e.g., API call)
-        const fetchPatientById = async (id: string): Promise<Patient> => {
-          return { id, name: 'John Doe', dateOfBirth: '1990-01-01' }; // Mock data
-        };
-        const data: Patient = await response.json();
-        setPatient(data);
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (patientId) {
-      fetchPatient();
+    if (state.isInitialized && patientId) {
+      const foundPatient = state.patients.find(p => p.id === patientId);
+      setPatient(foundPatient || null);
     }
-  }, [patientId]);
+  }, [patientId, state.isInitialized, state.patients]);
 
-  const handleUpdatePatient = async (updatedPatientData: Patient) => {
-    // Placeholder function to update patient data
-    // Replace with your actual data updating logic (e.g., API call)
-    console.log('Updating patient:', updatedPatientData);
-    // After successful update, you would typically redirect
-    // router.push(`/patients/${patientId}`);
-  };
-
-  if (loading) {
-    return <div>Cargando datos del paciente...</div>;
+  if (!state.isInitialized) {
+    return (
+      <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
+        <Skeleton className="h-10 w-1/2" />
+        <Skeleton className="h-12 w-full" />
+        <Skeleton className="h-12 w-full" />
+        <Skeleton className="h-12 w-full" />
+      </div>
+    );
   }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
+  
   if (!patient) {
-    return <div>Paciente no encontrado.</div>;
+     return (
+      <div className="flex flex-col items-center justify-center h-full p-8 text-center">
+        <h2 className="text-2xl font-semibold mb-2">Paciente no encontrado</h2>
+        <p className="text-muted-foreground mb-6">No se pudo encontrar el paciente que intenta editar.</p>
+        <Button asChild>
+          <Link href="/patients">
+            Volver a la Lista de Pacientes
+          </Link>
+        </Button>
+      </div>
+    );
   }
 
   return (
-    <div>
-      <h1>Editar Paciente</h1>
-      <EditPatientForm initialData={patient} onSubmit={handleUpdatePatient} />
+    <div className="p-4 md:p-8">
+      <div className="max-w-4xl mx-auto">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold font-headline">Editar Paciente</h1>
+          <p className="text-muted-foreground">Modifique los detalles del paciente a continuación.</p>
+        </div>
+        <EditPatientForm patient={patient} />
+      </div>
     </div>
   );
 };

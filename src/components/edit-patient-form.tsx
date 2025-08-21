@@ -1,149 +1,150 @@
-"use client"; // This is a Client Component
+"use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useRouter } from "next/navigation";
+import { usePatientContext } from '@/context/PatientContext';
+import { type Patient } from "@/lib/types";
+
 import { toast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel, // You can also import FormLabel here
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { CalendarIcon } from "@radix-ui/react-icons";
-import { Patient } from "@/lib/types"; // Assuming you have a Patient type
-import { useParams } from 'next/navigation' // Import useParams
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { User, Stethoscope, Bed } from "lucide-react";
 
 const formSchema = z.object({
   name: z.string().min(2, {
     message: "El nombre debe tener al menos 2 caracteres.",
   }),
-  dateOfBirth: z.date({
-    required_error: "Se requiere una fecha de nacimiento.",
-  }),
-  // Add other relevant patient fields with validation
-  // e.g., address: z.string().optional(),
-  //       phone: z.string().optional(),
+  diagnosis: z.string().min(1, 'El diagnóstico primario es requerido.'),
+  bedType: z.string(),
+  bedNumber: z.string(),
 });
 
 type PatientFormValues = z.infer<typeof formSchema>;
 
-import { usePatientContext } from '@/context/PatientContext'; // Import usePatientContext
-import { useEffect } from 'react'; // Import useEffect
+interface EditPatientFormProps {
+  patient: Patient;
+}
 
-interface EditPatientFormProps {}
-
-export function EditPatientForm({ patient, onUpdate }: EditPatientFormProps) {
-  const params = useParams(); // Get the params from the URL
-  const patientId = params.id as string; // Extract patient ID
+export function EditPatientForm({ patient }: EditPatientFormProps) {
   const router = useRouter();
-  const { patients, updatePatient } = usePatientContext(); // Get patients and updatePatient from context
+  const { dispatch } = usePatientContext();
 
   const form = useForm<PatientFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      // Default values will be set in useEffect
-      // based on fetched data
       name: patient.name || "",
-      dateOfBirth: patient.dateOfBirth ? new Date(patient.dateOfBirth) : undefined,
-      // Set default values for other fields
+      diagnosis: patient.diagnosis || "",
+      bedType: patient.bedType || "",
+      bedNumber: patient.bedNumber || "",
     },
   });
 
-  async function onSubmit(values: PatientFormValues) {
-    const patientToUpdate = patients.find(p => p.id === patientId);
-    if (!patientToUpdate) {
-      toast({
-        title: "Paciente no encontrado.",
-        variant: "destructive",
-      });
-      return;
-    }
+  function onSubmit(values: PatientFormValues) {
     try {
-      await updatePatient(patientId, values);
+      const updatedPatient: Patient = {
+        ...patient,
+        ...values
+      };
+      
+      dispatch({ type: 'UPDATE_PATIENT', payload: updatedPatient });
+      
       toast({
-        title: "Paciente actualizado exitosamente.",
+        title: "Paciente actualizado",
+        description: `Los datos de ${values.name} se han actualizado correctamente.`,
       });
-      router.push(`/patients/${patientId}`); // Redirect to the patient detail page
+      router.push(`/patients/${patient.id}`);
     } catch (error) {
       console.error("Error al actualizar el paciente:", error);
       toast({
-      variant: "destructive",
-    });
-  }
-
-
-
+        title: "Error",
+        description: "No se pudo actualizar el paciente.",
+        variant: "destructive",
+      });
+    }
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nombre</FormLabel>
-              <FormControl>
-                <Input placeholder="Nombre del Paciente" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="dateOfBirth"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Fecha de nacimiento</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-[240px] pl-3 text-left font-normal",
-                        !field.value && "text-muted-foreground"
-                      )}
-                    >
-                      {field.value ? (
-                        format(field.value, "PPP")
-                      ) : (
-                        <span>Elige una fecha</span>
-                      )}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold">Información Básica</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nombre</FormLabel>
+                   <FormControl>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input placeholder="John Doe" {...field} className="pl-10" />
+                    </div>
                   </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    disabled={(date) =>
-                      date > new Date() || date < new Date("1900-01-01")
-                    }
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        {/* Add other form fields here */}
-        <Button type="submit">Actualizar Paciente</Button>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="diagnosis"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Diagnóstico Primario</FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <Stethoscope className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input placeholder="ej., Diabetes Tipo 2" {...field} className="pl-10" />
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="bedType"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tipo de Cama</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Bed className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input placeholder="ej., UCI, General" {...field} className="pl-10" />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="bedNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Número de Cama</FormLabel>
+                    <FormControl>
+                      <Input placeholder="ej., 101-B" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <div className="flex justify-end gap-2">
+            <Button type="button" variant="outline" onClick={() => router.back()}>Cancelar</Button>
+            <Button type="submit">Actualizar Paciente</Button>
+        </div>
       </form>
     </Form>
   );

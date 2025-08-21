@@ -16,7 +16,7 @@ import {
   TabsTrigger,
 } from '@/components/ui/tabs';
 import {
-    User, Stethoscope, Bed, Pill, Activity, ShieldPlus, Box, Info, ListChecks, Calendar, Scale, BarChart2, PlusCircle, Trash2
+    User, Stethoscope, Bed, Pill, Activity, ShieldPlus, Box, Info, ListChecks, Calendar, Scale, BarChart2, PlusCircle, Trash2, Pencil
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -127,14 +127,20 @@ export default function PatientDetailView({ patient }: PatientDetailViewProps) {
 
   return (
     <div className="p-4 md:p-8">
-      <header className="mb-6">
-        <h1 className="text-3xl font-bold font-headline flex items-center gap-3">
-            <User className="w-8 h-8 text-primary"/>
-            {patient.name}
-        </h1>
-        <p className="text-muted-foreground flex items-center gap-2 mt-1">
-            <Stethoscope className="w-4 h-4" /> {patient.diagnosis}
-        </p>
+      <header className="mb-6 flex justify-between items-start">
+        <div>
+            <h1 className="text-3xl font-bold font-headline flex items-center gap-3">
+                <User className="w-8 h-8 text-primary"/>
+                {patient.name}
+            </h1>
+            <p className="text-muted-foreground flex items-center gap-2 mt-1">
+                <Stethoscope className="w-4 h-4" /> {patient.diagnosis}
+            </p>
+        </div>
+        <Button variant="outline" onClick={() => router.push(`/patients/${patient.id}/edit`)}>
+            <Pencil className="w-4 h-4 mr-2" />
+            Editar Paciente
+        </Button>
       </header>
 
       <Tabs defaultValue="details">
