@@ -204,7 +204,7 @@ export default function PatientDetailView({ patient }: PatientDetailViewProps) {
                 <ListCard title="Medicamentos" items={patient.medications} icon={Pill} />
                 <ListCard title="Tratamientos" items={patient.treatments} icon={Activity} />
                 <ListCard title="Procedimientos Quirúrgicos" items={patient.surgicalProcedures} icon={Stethoscope} />
-                <ListCard title="Suministros" items={patient.supplies} icon={Box} />
+                <ListCard title="Suministros o Insumos" items={patient.supplies} icon={Box} />
             </div>
         </TabsContent>
         <TabsContent value="evaluations" className="mt-6">

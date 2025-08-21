@@ -260,7 +260,7 @@ const AddPatientFormContent = () => {
           <EditableList name="medications" title="Medicamentos" icon={Pill} />
           <EditableList name="treatments" title="Tratamientos" icon={Activity} />
           <EditableList name="surgicalProcedures" title="Procedimientos Quirúrgicos" icon={Stethoscope} />
-          <EditableList name="supplies" title="Suministros" icon={Box} />
+          <EditableList name="supplies" title="Suministros o Insumos" icon={Box} />
         </div>
 
         <div className="flex justify-end">
