@@ -5,8 +5,11 @@ import PatientDetailView from '@/components/patient-detail-view';
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { useParams } from 'next/navigation';
 
-export default function PatientDetailPage({ params }: { params: { id: string } }) {
+export default function PatientDetailPage() {
+  const params = useParams();
+  const patientId = Array.isArray(params.id) ? params.id[0] : params.id;
   const { state } = usePatientContext();
   const { patients, isInitialized } = state;
 
@@ -23,7 +26,7 @@ export default function PatientDetailPage({ params }: { params: { id: string } }
     )
   }
 
-  const patient = patients.find((p) => p.id === params.id);
+  const patient = patients.find((p) => p.id === patientId);
 
   if (!patient) {
     return (
