@@ -148,7 +148,7 @@ export default function DiagnosisAssistantDialog({ currentValues, setDiagnosis }
                 )}
               />
               <DialogFooter>
-                <Button type="submit" disabled={isLoading}>
+                <Button type="button" onClick={form.handleSubmit(onSubmit)} disabled={isLoading}>
                   {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   Get Suggestions
                 </Button>
