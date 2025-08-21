@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useForm, useFieldArray, FormProvider, useFormContext } from 'react-hook-form';
+import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { usePatientContext } from '@/context/PatientContext';
@@ -13,8 +13,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Lightbulb, Loader2, User, Stethoscope, Bed, CirclePlus, Trash2, Pill, Activity, ShieldPlus, Box } from 'lucide-react';
+import { Lightbulb, Loader2, User, Stethoscope, Bed, ShieldPlus, Pill, Activity, Box } from 'lucide-react';
 import DiagnosisAssistantDialog from './diagnosis-assistant-dialog';
+import { EditableList } from './editable-list';
 
 const patientSchema = z.object({
   name: z.string().min(1, 'El nombre del paciente es requerido.'),
@@ -29,53 +30,6 @@ const patientSchema = z.object({
 });
 
 export type PatientFormValues = z.infer<typeof patientSchema>;
-
-const EditableList = ({ name, title, icon: Icon }: { name: any, title: string, icon: React.ElementType }) => {
-  const { control } = useFormContext<PatientFormValues>();
-  const { fields, append, remove } = useFieldArray({ control, name });
-  const [inputValue, setInputValue] = useState('');
-
-  const handleAdd = () => {
-    if (inputValue.trim()) {
-      append({ value: inputValue.trim() });
-      setInputValue('');
-    }
-  };
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-lg font-semibold">
-          <Icon className="w-5 h-5 text-primary" />
-          {title}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="flex gap-2 mb-4">
-          <Input
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAdd(); } }}
-            placeholder={`Añadir un ${title.toLowerCase().slice(0, -1)}...`}
-            className="flex-grow"
-          />
-          <Button type="button" onClick={handleAdd}><CirclePlus className="w-4 h-4 mr-2" />Añadir</Button>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {fields.map((field, index) => (
-            <div key={field.id} className="flex items-center gap-1 bg-secondary text-secondary-foreground rounded-full px-3 py-1 text-sm">
-              <span>{(field as { value: string }).value}</span>
-              <button type="button" onClick={() => remove(index)} className="text-muted-foreground hover:text-destructive">
-                <Trash2 className="w-3 h-3" />
-              </button>
-            </div>
-          ))}
-        </div>
-        {fields.length === 0 && <p className="text-sm text-muted-foreground mt-2">No se han añadido {title.toLowerCase()} aún.</p>}
-      </CardContent>
-    </Card>
-  );
-};
 
 const AddPatientFormContent = () => {
   const router = useRouter();
@@ -256,7 +210,7 @@ export default function AddPatientForm() {
     }, []);
 
     if (!isClient) {
-        return null;
+        return null; // O un esqueleto/spinner
     }
 
     return <AddPatientFormContent />;

@@ -1,26 +1,31 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, FormProvider, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useRouter } from "next/navigation";
 import { usePatientContext } from '@/context/PatientContext';
 import { type Patient } from "@/lib/types";
+import { useToast } from "@/hooks/use-toast";
 
-import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { User, Stethoscope, Bed } from "lucide-react";
+import { User, Stethoscope, Bed, ShieldPlus, Pill, Activity, Box } from "lucide-react";
+import { EditableList } from "./editable-list";
+
 
 const formSchema = z.object({
-  name: z.string().min(2, {
-    message: "El nombre debe tener al menos 2 caracteres.",
-  }),
+  name: z.string().min(2, { message: "El nombre debe tener al menos 2 caracteres." }),
   diagnosis: z.string().min(1, 'El diagnóstico primario es requerido.'),
   bedType: z.string(),
   bedNumber: z.string(),
+  comorbidities: z.array(z.object({ value: z.string() })),
+  medications: z.array(z.object({ value: z.string() })),
+  treatments: z.array(z.object({ value: z.string() })),
+  surgicalProcedures: z.array(z.object({ value: z.string() })),
+  supplies: z.array(z.object({ value: z.string() })),
 });
 
 type PatientFormValues = z.infer<typeof formSchema>;
@@ -32,14 +37,20 @@ interface EditPatientFormProps {
 export function EditPatientForm({ patient }: EditPatientFormProps) {
   const router = useRouter();
   const { dispatch } = usePatientContext();
+  const { toast } = useToast();
 
-  const form = useForm<PatientFormValues>({
+  const methods = useForm<PatientFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: patient.name || "",
       diagnosis: patient.diagnosis || "",
       bedType: patient.bedType || "",
       bedNumber: patient.bedNumber || "",
+      comorbidities: patient.comorbidities.map(value => ({ value })) || [],
+      medications: patient.medications.map(value => ({ value })) || [],
+      treatments: patient.treatments.map(value => ({ value })) || [],
+      surgicalProcedures: patient.surgicalProcedures.map(value => ({ value })) || [],
+      supplies: patient.supplies.map(value => ({ value })) || [],
     },
   });
 
@@ -47,7 +58,15 @@ export function EditPatientForm({ patient }: EditPatientFormProps) {
     try {
       const updatedPatient: Patient = {
         ...patient,
-        ...values
+        name: values.name,
+        diagnosis: values.diagnosis,
+        bedType: values.bedType,
+        bedNumber: values.bedNumber,
+        comorbidities: values.comorbidities.map(i => i.value),
+        medications: values.medications.map(i => i.value),
+        treatments: values.treatments.map(i => i.value),
+        surgicalProcedures: values.surgicalProcedures.map(i => i.value),
+        supplies: values.supplies.map(i => i.value),
       };
       
       dispatch({ type: 'UPDATE_PATIENT', payload: updatedPatient });
@@ -68,15 +87,15 @@ export function EditPatientForm({ patient }: EditPatientFormProps) {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+    <FormProvider {...methods}>
+      <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6">
         <Card>
           <CardHeader>
             <CardTitle className="text-lg font-semibold">Información Básica</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <FormField
-              control={form.control}
+              control={methods.control}
               name="name"
               render={({ field }) => (
                 <FormItem>
@@ -92,7 +111,7 @@ export function EditPatientForm({ patient }: EditPatientFormProps) {
               )}
             />
             <FormField
-              control={form.control}
+              control={methods.control}
               name="diagnosis"
               render={({ field }) => (
                 <FormItem>
@@ -109,7 +128,7 @@ export function EditPatientForm({ patient }: EditPatientFormProps) {
             />
              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
-                control={form.control}
+                control={methods.control}
                 name="bedType"
                 render={({ field }) => (
                   <FormItem>
@@ -125,7 +144,7 @@ export function EditPatientForm({ patient }: EditPatientFormProps) {
                 )}
               />
               <FormField
-                control={form.control}
+                control={methods.control}
                 name="bedNumber"
                 render={({ field }) => (
                   <FormItem>
@@ -140,12 +159,20 @@ export function EditPatientForm({ patient }: EditPatientFormProps) {
             </div>
           </CardContent>
         </Card>
+
+         <div className="space-y-4">
+          <EditableList name="comorbidities" title="Comorbilidades" icon={ShieldPlus} />
+          <EditableList name="medications" title="Medicamentos" icon={Pill} />
+          <EditableList name="treatments" title="Tratamientos" icon={Activity} />
+          <EditableList name="surgicalProcedures" title="Procedimientos Quirúrgicos" icon={Stethoscope} />
+          <EditableList name="supplies" title="Suministros" icon={Box} />
+        </div>
         
         <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => router.back()}>Cancelar</Button>
             <Button type="submit">Actualizar Paciente</Button>
         </div>
       </form>
-    </Form>
+    </FormProvider>
   );
 }
