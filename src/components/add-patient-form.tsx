@@ -110,6 +110,28 @@ const AddPatientFormContent = () => {
     router.push('/patients');
   }
 
+  const handleApplyDiagnoses = (diagnoses: string[]) => {
+    if (diagnoses.length === 0) return;
+
+    const [primary, ...comorbidities] = diagnoses;
+    setValue('diagnosis', primary, { shouldValidate: true });
+
+    const existingComorbidities = new Set(getValues('comorbidities').map(c => c.value));
+    const newComorbidities = comorbidities.filter(c => !existingComorbidities.has(c));
+    
+    if (newComorbidities.length > 0) {
+      setValue('comorbidities', [
+        ...getValues('comorbidities'),
+        ...newComorbidities.map(value => ({ value }))
+      ]);
+    }
+    
+    toast({
+        title: 'Diagnósticos Aplicados',
+        description: `Diagnóstico principal establecido y ${newComorbidities.length} comorbilidades añadidas.`
+    });
+  };
+
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -148,7 +170,7 @@ const AddPatientFormContent = () => {
                     </div>
                     <DiagnosisAssistantDialog
                       currentValues={formValues}
-                      setDiagnosis={(value) => setValue('diagnosis', value, { shouldValidate: true })}
+                      onApplyDiagnoses={handleApplyDiagnoses}
                     />
                   </div>
                   <FormMessage />

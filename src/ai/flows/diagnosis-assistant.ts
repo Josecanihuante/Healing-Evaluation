@@ -20,7 +20,7 @@ const DiagnosisAssistantInputSchema = z.object({
 export type DiagnosisAssistantInput = z.infer<typeof DiagnosisAssistantInputSchema>;
 
 const DiagnosisAssistantOutputSchema = z.object({
-  suggestedDiagnoses: z.string().describe('A list of suggested diagnoses based on the input information.'),
+  suggestedDiagnoses: z.string().describe('A comma-separated list of suggested diagnoses based on the input information.'),
   confidenceLevels: z.string().describe('The confidence levels for each suggested diagnosis.'),
   additionalTests: z.string().describe('A list of additional tests that may be helpful in confirming the diagnosis.'),
 });
@@ -42,7 +42,7 @@ const prompt = ai.definePrompt({
   Historial Médico: {{{medicalHistory}}}
   Otra Información Relevante: {{{otherRelevantInformation}}}
 
-  Proporciona la salida en un formato estructurado.
+  Proporciona la salida en un formato estructurado. El campo suggestedDiagnoses debe ser una lista separada por comas.
   `,
 });
 

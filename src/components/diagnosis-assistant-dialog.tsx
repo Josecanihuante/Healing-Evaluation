@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -14,6 +14,8 @@ import { Loader2, Sparkles, Wand2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { type PatientFormValues } from './add-patient-form';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Checkbox } from './ui/checkbox';
+import { Label } from './ui/label';
 
 
 const diagnosisSchema = z.object({
@@ -26,14 +28,15 @@ type DiagnosisFormValues = z.infer<typeof diagnosisSchema>;
 
 interface DiagnosisAssistantDialogProps {
   currentValues: PatientFormValues;
-  setDiagnosis: (diagnosis: string) => void;
+  onApplyDiagnoses: (diagnoses: string[]) => void;
 }
 
-export default function DiagnosisAssistantDialog({ currentValues, setDiagnosis }: DiagnosisAssistantDialogProps) {
+export default function DiagnosisAssistantDialog({ currentValues, onApplyDiagnoses }: DiagnosisAssistantDialogProps) {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<DiagnosisAssistantOutput | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [selectedDiagnoses, setSelectedDiagnoses] = useState<string[]>([]);
 
   const methods = useForm<DiagnosisFormValues>({
     resolver: zodResolver(diagnosisSchema),
@@ -72,13 +75,9 @@ export default function DiagnosisAssistantDialog({ currentValues, setDiagnosis }
     }
   };
   
-  const handleUseDiagnosis = (diagnosis: string) => {
-    setDiagnosis(diagnosis);
+  const handleUseDiagnoses = () => {
+    onApplyDiagnoses(selectedDiagnoses);
     setIsOpen(false);
-    toast({
-        title: 'Diagnóstico Actualizado',
-        description: `Se estableció el diagnóstico primario a "${diagnosis}".`,
-    });
   }
 
   const resetDialog = (open: boolean) => {
@@ -86,8 +85,19 @@ export default function DiagnosisAssistantDialog({ currentValues, setDiagnosis }
       methods.reset();
       setResult(null);
       setIsLoading(false);
+      setSelectedDiagnoses([]);
     }
     setIsOpen(open);
+  }
+
+  const handleDiagnosisSelection = (diagnosis: string, checked: boolean) => {
+    setSelectedDiagnoses(prev => {
+        if (checked) {
+            return [...prev, diagnosis];
+        } else {
+            return prev.filter(d => d !== diagnosis);
+        }
+    });
   }
 
   return (
@@ -158,12 +168,18 @@ export default function DiagnosisAssistantDialog({ currentValues, setDiagnosis }
             <div className="space-y-4">
               <Card>
                 <CardHeader><CardTitle>Diagnósticos Sugeridos</CardTitle></CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-2">
-                    {result.suggestedDiagnoses.split(',').map(d => d.trim()).filter(Boolean).map(diag => (
-                      <Button key={diag} size="sm" variant="secondary" onClick={() => handleUseDiagnosis(diag)}>Usar "{diag}"</Button>
+                <CardContent className="space-y-2">
+                    <p className="text-sm text-muted-foreground">Seleccione los diagnósticos a aplicar. El primero que seleccione será el diagnóstico principal.</p>
+                    {result.suggestedDiagnoses.split(/, | y /).map(d => d.trim()).filter(Boolean).map(diag => (
+                      <div key={diag} className="flex items-center space-x-2 p-2 rounded-md hover:bg-accent/50">
+                        <Checkbox 
+                            id={diag}
+                            onCheckedChange={(checked) => handleDiagnosisSelection(diag, checked as boolean)}
+                            checked={selectedDiagnoses.includes(diag)}
+                        />
+                        <Label htmlFor={diag} className="font-normal flex-1 cursor-pointer">{diag}</Label>
+                      </div>
                     ))}
-                  </div>
                 </CardContent>
               </Card>
               <Card>
@@ -189,12 +205,15 @@ export default function DiagnosisAssistantDialog({ currentValues, setDiagnosis }
               Obtener Sugerencias
             </Button>
           ) : (
-            <>
+            <div className="w-full flex justify-between">
               <Button variant="outline" onClick={() => setResult(null)}>Atrás</Button>
-              <DialogClose asChild>
-                  <Button type="button">Cerrar</Button>
-              </DialogClose>
-            </>
+               <div className="flex gap-2">
+                  <Button type="button" variant="secondary" onClick={resetDialog}>Cerrar</Button>
+                  <Button type="button" onClick={handleUseDiagnoses} disabled={selectedDiagnoses.length === 0}>
+                    Usar Diagnósticos Seleccionados ({selectedDiagnoses.length})
+                  </Button>
+               </div>
+            </div>
           )}
         </DialogFooter>
       </DialogContent>
