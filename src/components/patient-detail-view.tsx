@@ -57,7 +57,8 @@ const ListCard = ({ title, items, icon: Icon }: { title: string, items: string[]
     );
 };
 
-const EvaluationCard = ({ evaluation, onRemove }: { evaluation: Evaluation, onRemove: () => void }) => {
+const EvaluationCard = ({ patientId, evaluation, onRemove }: { patientId: string, evaluation: Evaluation, onRemove: () => void }) => {
+    const router = useRouter();
     const isTreatment = evaluation.type === 'treatment';
     const date = new Date(evaluation.dateEvaluated);
     return (
@@ -73,23 +74,28 @@ const EvaluationCard = ({ evaluation, onRemove }: { evaluation: Evaluation, onRe
                             <Calendar className="w-4 h-4" /> {date.toLocaleDateString()}
                         </CardDescription>
                     </div>
-                     <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                            <Button variant="ghost" size="icon"><Trash2 className="w-4 h-4 text-destructive" /></Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                            <AlertDialogHeader>
-                            <AlertDialogTitle>¿Está seguro?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                                Esta acción no se puede deshacer. Esto eliminará permanentemente este registro de evaluación.
-                            </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                            <AlertDialogAction onClick={onRemove} className="bg-destructive hover:bg-destructive/90">Eliminar</AlertDialogAction>
-                            </AlertDialogFooter>
-                        </AlertDialogContent>
-                    </AlertDialog>
+                     <div className="flex items-center gap-2">
+                         <Button variant="ghost" size="icon" onClick={() => router.push(`/patients/${patientId}/evaluations/${evaluation.id}/edit`)}>
+                            <Pencil className="w-4 h-4 text-muted-foreground" />
+                        </Button>
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button variant="ghost" size="icon"><Trash2 className="w-4 h-4 text-destructive" /></Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                <AlertDialogTitle>¿Está seguro?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    Esta acción no se puede deshacer. Esto eliminará permanentemente este registro de evaluación.
+                                </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                <AlertDialogAction onClick={onRemove} className="bg-destructive hover:bg-destructive/90">Eliminar</AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+                    </div>
                 </div>
             </CardHeader>
             <CardContent>
@@ -179,7 +185,7 @@ export default function PatientDetailView({ patient }: PatientDetailViewProps) {
             {patient.evaluations.length > 0 ? (
                 <div>
                     {patient.evaluations.sort((a,b) => new Date(b.dateEvaluated).getTime() - new Date(a.dateEvaluated).getTime()).map(eva => (
-                        <EvaluationCard key={eva.id} evaluation={eva} onRemove={() => handleRemoveEvaluation(eva.id)} />
+                        <EvaluationCard key={eva.id} patientId={patient.id} evaluation={eva} onRemove={() => handleRemoveEvaluation(eva.id)} />
                     ))}
                 </div>
             ) : (

@@ -13,6 +13,7 @@ type Action =
   | { type: 'ADD_PATIENT'; payload: Patient }
   | { type: 'UPDATE_PATIENT'; payload: Patient }
   | { type: 'ADD_EVALUATION'; payload: { patientId: string; evaluation: Evaluation } }
+  | { type: 'UPDATE_EVALUATION'; payload: { patientId: string; evaluation: Evaluation } }
   | { type: 'REMOVE_EVALUATION'; payload: { patientId: string; evaluationId: string } };
 
 const initialState: PatientState = {
@@ -38,6 +39,17 @@ function patientReducer(state: PatientState, action: Action): PatientState {
         patients: state.patients.map(p =>
           p.id === patientId
             ? { ...p, evaluations: [...p.evaluations, evaluation] }
+            : p
+        ),
+      };
+    }
+    case 'UPDATE_EVALUATION': {
+      const { patientId, evaluation } = action.payload;
+      return {
+        ...state,
+        patients: state.patients.map(p =>
+          p.id === patientId
+            ? { ...p, evaluations: p.evaluations.map(e => e.id === evaluation.id ? evaluation : e) }
             : p
         ),
       };
