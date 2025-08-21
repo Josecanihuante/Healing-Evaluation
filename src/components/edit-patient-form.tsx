@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { User, Stethoscope, Bed, ShieldPlus, Pill, Activity, Box, UserMd, UserNurse } from "lucide-react";
+import { User, Stethoscope, Bed, ShieldPlus, Pill, Activity, Box } from "lucide-react";
 import { EditableList } from "./editable-list";
 
 
@@ -183,7 +183,7 @@ export function EditPatientForm({ patient }: EditPatientFormProps) {
                     <FormLabel>Enfermero Encargado</FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <UserNurse className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input placeholder="Nombre del enfermero" {...field} className="pl-10" />
                       </div>
                     </FormControl>
@@ -199,7 +199,7 @@ export function EditPatientForm({ patient }: EditPatientFormProps) {
                     <FormLabel>Enfermero Supervisor</FormLabel>
                      <FormControl>
                       <div className="relative">
-                        <UserNurse className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input placeholder="Nombre del supervisor" {...field} className="pl-10" />
                       </div>
                     </FormControl>
@@ -208,7 +208,7 @@ export function EditPatientForm({ patient }: EditPatientFormProps) {
                 )}
               />
             </div>
-             <EditableList name="treatingPhysicians" title="Médicos Tratantes" icon={UserMd} />
+             <EditableList name="treatingPhysicians" title="Médicos Tratantes" icon={Stethoscope} />
           </CardContent>
         </Card>
 

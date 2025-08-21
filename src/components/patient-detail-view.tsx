@@ -16,7 +16,7 @@ import {
   TabsTrigger,
 } from '@/components/ui/tabs';
 import {
-    User, Stethoscope, Bed, Pill, Activity, ShieldPlus, Box, Info, ListChecks, Calendar, Scale, BarChart2, PlusCircle, Trash2, Pencil, UserMd, UserNurse
+    User, Stethoscope, Bed, Pill, Activity, ShieldPlus, Box, Info, ListChecks, Calendar, Scale, BarChart2, PlusCircle, Trash2, Pencil
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -168,14 +168,14 @@ export default function PatientDetailView({ patient }: PatientDetailViewProps) {
                 </Card>
                 <Card>
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2 text-lg"><UserMd className="w-5 h-5 text-primary" />Personal Médico</CardTitle>
+                        <CardTitle className="flex items-center gap-2 text-lg"><User className="w-5 h-5 text-primary" />Personal Médico</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <DetailRow label="Enfermero Encargado" value={patient.nurseInCharge} />
                         <DetailRow label="Enfermero Supervisor" value={patient.supervisingNurse} />
                     </CardContent>
                 </Card>
-                <ListCard title="Médicos Tratantes" items={patient.treatingPhysicians} icon={UserMd} />
+                <ListCard title="Médicos Tratantes" items={patient.treatingPhysicians} icon={Stethoscope} />
                 <ListCard title="Comorbilidades" items={patient.comorbidities} icon={ShieldPlus} />
                 <ListCard title="Medicamentos" items={patient.medications} icon={Pill} />
                 <ListCard title="Tratamientos" items={patient.treatments} icon={Activity} />
