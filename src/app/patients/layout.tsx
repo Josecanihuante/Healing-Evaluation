@@ -43,11 +43,11 @@ export default function PatientsLayout({
               <SidebarMenuButton
                 asChild
                 isActive={pathname === '/patients'}
-                tooltip="All Patients"
+                tooltip="Todos los Pacientes"
               >
                 <Link href="/patients">
                   <Users />
-                  <span>Patients</span>
+                  <span>Pacientes</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -55,11 +55,11 @@ export default function PatientsLayout({
               <SidebarMenuButton
                 asChild
                 isActive={pathname === '/patients/add'}
-                tooltip="Add Patient"
+                tooltip="Añadir Paciente"
               >
                 <Link href="/patients/add">
                   <PlusCircle />
-                  <span>Add Patient</span>
+                  <span>Añadir Paciente</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

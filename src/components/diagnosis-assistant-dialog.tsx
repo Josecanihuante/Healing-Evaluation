@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -8,15 +8,16 @@ import { diagnosisAssistant, type DiagnosisAssistantOutput } from '@/ai/flows/di
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from '@/components/ui/dialog';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Sparkles, Wand2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { type PatientFormValues } from './add-patient-form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+
 
 const diagnosisSchema = z.object({
-  symptoms: z.string().min(10, 'Please provide detailed symptoms.'),
+  symptoms: z.string().min(10, 'Por favor, proporcione síntomas detallados.'),
   medicalHistory: z.string(),
   otherRelevantInformation: z.string(),
 });
@@ -50,30 +51,35 @@ export default function DiagnosisAssistantDialog({ currentValues, setDiagnosis }
   }, [isOpen, currentValues, form]);
 
 
-  async function onSubmit(data: DiagnosisFormValues) {
+  const handleSubmit = useCallback(async () => {
+    const isFormValid = await form.trigger();
+    if (!isFormValid) {
+        return;
+    }
+    const data = form.getValues();
     setIsLoading(true);
     setResult(null);
     try {
       const assistantResult = await diagnosisAssistant(data);
       setResult(assistantResult);
     } catch (error) {
-      console.error('Diagnosis assistant error:', error);
+      console.error('Error del asistente de diagnóstico:', error);
       toast({
         title: 'Error',
-        description: 'Failed to get diagnosis assistance. Please try again.',
+        description: 'No se pudo obtener la asistencia de diagnóstico. Por favor, inténtelo de nuevo.',
         variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
     }
-  }
+  }, [form, toast]);
   
   const handleUseDiagnosis = (diagnosis: string) => {
     setDiagnosis(diagnosis);
     setIsOpen(false);
     toast({
-        title: 'Diagnosis Updated',
-        description: `Set primary diagnosis to "${diagnosis}".`,
+        title: 'Diagnóstico Actualizado',
+        description: `Se estableció el diagnóstico primario a "${diagnosis}".`,
     });
   }
 
@@ -91,17 +97,17 @@ export default function DiagnosisAssistantDialog({ currentValues, setDiagnosis }
       <DialogTrigger asChild>
         <Button type="button" variant="outline">
           <Wand2 className="mr-2 h-4 w-4" />
-          AI Assistant
+          Asistente de IA
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[625px] flex flex-col max-h-[90vh]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="text-primary" />
-            Diagnosis Assistant
+            Asistente de Diagnóstico
           </DialogTitle>
           <DialogDescription>
-            Provide patient details and let AI suggest possible diagnoses. For professional use only.
+            Proporcione los detalles del paciente y deje que la IA sugiera posibles diagnósticos. Solo para uso profesional.
           </DialogDescription>
         </DialogHeader>
         
@@ -114,9 +120,9 @@ export default function DiagnosisAssistantDialog({ currentValues, setDiagnosis }
                     name="symptoms"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Symptoms or Current Diagnosis</FormLabel>
+                        <FormLabel>Síntomas o Diagnóstico Actual</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="e.g., Persistent cough, fever, shortness of breath... or a working diagnosis" {...field} />
+                          <Textarea placeholder="ej., Tos persistente, fiebre, dificultad para respirar... o un diagnóstico provisional" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -127,9 +133,9 @@ export default function DiagnosisAssistantDialog({ currentValues, setDiagnosis }
                     name="medicalHistory"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Medical History</FormLabel>
+                        <FormLabel>Historial Médico</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="e.g., History of asthma, non-smoker..." {...field} />
+                          <Textarea placeholder="ej., Historial de asma, no fumador..." {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -140,9 +146,9 @@ export default function DiagnosisAssistantDialog({ currentValues, setDiagnosis }
                     name="otherRelevantInformation"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Other Relevant Information</FormLabel>
+                        <FormLabel>Otra Información Relevante</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="e.g., Recent travel to..." {...field} />
+                          <Textarea placeholder="ej., Viaje reciente a..." {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -153,23 +159,23 @@ export default function DiagnosisAssistantDialog({ currentValues, setDiagnosis }
           ) : (
             <div className="space-y-4">
               <Card>
-                <CardHeader><CardTitle>Suggested Diagnoses</CardTitle></CardHeader>
+                <CardHeader><CardTitle>Diagnósticos Sugeridos</CardTitle></CardHeader>
                 <CardContent>
                   <div className="flex flex-wrap gap-2">
                     {result.suggestedDiagnoses.split(',').map(d => d.trim()).filter(Boolean).map(diag => (
-                      <Button key={diag} size="sm" variant="secondary" onClick={() => handleUseDiagnosis(diag)}>Use "{diag}"</Button>
+                      <Button key={diag} size="sm" variant="secondary" onClick={() => handleUseDiagnosis(diag)}>Usar "{diag}"</Button>
                     ))}
                   </div>
                 </CardContent>
               </Card>
               <Card>
-                <CardHeader><CardTitle>Confidence Levels</CardTitle></CardHeader>
+                <CardHeader><CardTitle>Niveles de Confianza</CardTitle></CardHeader>
                 <CardContent>
                   <p>{result.confidenceLevels}</p>
                 </CardContent>
               </Card>
               <Card>
-                <CardHeader><CardTitle>Recommended Additional Tests</CardTitle></CardHeader>
+                <CardHeader><CardTitle>Pruebas Adicionales Recomendadas</CardTitle></CardHeader>
                 <CardContent>
                   <p>{result.additionalTests}</p>
                 </CardContent>
@@ -178,17 +184,17 @@ export default function DiagnosisAssistantDialog({ currentValues, setDiagnosis }
           )}
         </div>
 
-        <DialogFooter className="flex-shrink-0">
+        <DialogFooter className="flex-shrink-0 pt-4">
           {!result ? (
-            <Button type="button" onClick={form.handleSubmit(onSubmit)} disabled={isLoading}>
+            <Button type="button" onClick={handleSubmit} disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Get Suggestions
+              Obtener Sugerencias
             </Button>
           ) : (
             <>
-              <Button variant="outline" onClick={() => setResult(null)}>Back</Button>
+              <Button variant="outline" onClick={() => setResult(null)}>Atrás</Button>
               <DialogClose asChild>
-                  <Button type="button">Close</Button>
+                  <Button type="button">Cerrar</Button>
               </DialogClose>
             </>
           )}

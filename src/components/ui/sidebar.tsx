@@ -139,7 +139,7 @@ const SidebarFooter = React.forwardRef<
       >
         <SidebarMenuButton
           onClick={toggleCollapse}
-          tooltip={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          tooltip={isCollapsed ? "Expandir barra lateral" : "Contraer barra lateral"}
           tooltipSide="right"
         >
           {isCollapsed ? <ChevronsRight /> : <ChevronsLeft />}

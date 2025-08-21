@@ -31,11 +31,11 @@ export default function PatientDetailPage() {
   if (!patient) {
     return (
       <div className="flex flex-col items-center justify-center h-full p-8 text-center">
-        <h2 className="text-2xl font-semibold mb-2">Patient not found</h2>
-        <p className="text-muted-foreground mb-6">The requested patient could not be found.</p>
+        <h2 className="text-2xl font-semibold mb-2">Paciente no encontrado</h2>
+        <p className="text-muted-foreground mb-6">No se pudo encontrar el paciente solicitado.</p>
         <Button asChild>
           <Link href="/patients">
-            Back to Patient List
+            Volver a la Lista de Pacientes
           </Link>
         </Button>
       </div>

@@ -16,12 +16,12 @@ export default function PatientListView({ patients }: PatientListViewProps) {
     return (
       <div className="flex flex-col items-center justify-center h-full p-8 text-center">
         <User className="w-24 h-24 text-muted-foreground/50 mb-4" />
-        <h2 className="text-2xl font-semibold mb-2">No patients yet</h2>
-        <p className="text-muted-foreground mb-6">Get started by adding a new patient.</p>
+        <h2 className="text-2xl font-semibold mb-2">Aún no hay pacientes</h2>
+        <p className="text-muted-foreground mb-6">Comience añadiendo un nuevo paciente.</p>
         <Button asChild>
           <Link href="/patients/add">
             <PlusCircle className="mr-2 h-4 w-4" />
-            Add Patient
+            Añadir Paciente
           </Link>
         </Button>
       </div>
@@ -31,11 +31,11 @@ export default function PatientListView({ patients }: PatientListViewProps) {
   return (
     <div className="p-4 md:p-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold font-headline">Patients</h1>
+        <h1 className="text-3xl font-bold font-headline">Pacientes</h1>
         <Button asChild>
           <Link href="/patients/add">
             <PlusCircle className="mr-2 h-4 w-4" />
-            Add Patient
+            Añadir Paciente
           </Link>
         </Button>
       </div>
@@ -49,10 +49,10 @@ export default function PatientListView({ patients }: PatientListViewProps) {
                 </AvatarFallback>
               </Avatar>
               <div>
-                <CardTitle className="font-headline">{patient.name || 'Unnamed Patient'}</CardTitle>
+                <CardTitle className="font-headline">{patient.name || 'Paciente sin nombre'}</CardTitle>
                 <CardDescription className="flex items-center gap-2 pt-1">
                   <Stethoscope className="w-4 h-4" />
-                  {patient.diagnosis || 'No diagnosis'}
+                  {patient.diagnosis || 'Sin diagnóstico'}
                 </CardDescription>
               </div>
             </CardHeader>
@@ -61,19 +61,19 @@ export default function PatientListView({ patients }: PatientListViewProps) {
                 <div className="flex items-center gap-2">
                   <Bed className="w-4 h-4 text-primary" />
                   <span>
-                    Bed: {patient.bedNumber || 'N/A'} ({patient.bedType || 'N/A'})
+                    Cama: {patient.bedNumber || 'N/A'} ({patient.bedType || 'N/A'})
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="font-semibold text-foreground">{patient.evaluations.length}</span>
-                  <span>Evaluations</span>
+                  <span>Evaluaciones</span>
                 </div>
               </div>
             </CardContent>
             <div className="p-4 pt-0">
                <Button asChild variant="outline" className="w-full">
                 <Link href={`/patients/${patient.id}`}>
-                  View Details <ArrowRight className="ml-2 h-4 w-4" />
+                  Ver Detalles <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
             </div>

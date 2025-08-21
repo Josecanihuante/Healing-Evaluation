@@ -32,7 +32,7 @@ interface PatientDetailViewProps {
 const DetailRow = ({ label, value }: { label: string, value: React.ReactNode }) => (
   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-2 border-b last:border-b-0">
     <p className="font-medium text-muted-foreground">{label}</p>
-    <div className="text-right">{value || <span className="text-muted-foreground/70">Not specified</span>}</div>
+    <div className="text-right">{value || <span className="text-muted-foreground/70">No especificado</span>}</div>
   </div>
 );
 
@@ -66,7 +66,7 @@ const EvaluationCard = ({ evaluation, onRemove }: { evaluation: Evaluation, onRe
                 <div className="flex justify-between items-start">
                     <div>
                         <Badge variant={isTreatment ? "default" : "secondary"} className={`${isTreatment ? "bg-accent text-accent-foreground" : "bg-blue-200 text-blue-800"}`}>
-                            {evaluation.type.toUpperCase()}
+                            {evaluation.type === 'treatment' ? 'TRATAMIENTO' : 'QUIRÚRGICO'}
                         </Badge>
                         <CardTitle className="mt-2">{evaluation.procedureName}</CardTitle>
                         <CardDescription className="flex items-center gap-2 text-sm mt-1">
@@ -79,14 +79,14 @@ const EvaluationCard = ({ evaluation, onRemove }: { evaluation: Evaluation, onRe
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                             <AlertDialogHeader>
-                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                            <AlertDialogTitle>¿Está seguro?</AlertDialogTitle>
                             <AlertDialogDescription>
-                                This action cannot be undone. This will permanently delete this evaluation record.
+                                Esta acción no se puede deshacer. Esto eliminará permanentemente este registro de evaluación.
                             </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={onRemove} className="bg-destructive hover:bg-destructive/90">Delete</AlertDialogAction>
+                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                            <AlertDialogAction onClick={onRemove} className="bg-destructive hover:bg-destructive/90">Eliminar</AlertDialogAction>
                             </AlertDialogFooter>
                         </AlertDialogContent>
                     </AlertDialog>
@@ -97,13 +97,13 @@ const EvaluationCard = ({ evaluation, onRemove }: { evaluation: Evaluation, onRe
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <div className="flex justify-between items-center mb-1 text-sm">
-                            <span className="font-medium flex items-center gap-2"><Scale className="w-4 h-4"/>Scale Rating</span>
+                            <span className="font-medium flex items-center gap-2"><Scale className="w-4 h-4"/>Calificación en Escala</span>
                             <span className="font-bold text-primary">{Math.round(evaluation.scaleRating * 100)}%</span>
                         </div>
                         <Progress value={evaluation.scaleRating * 100} />
                     </div>
                     <div>
-                        <span className="font-medium text-sm flex items-center gap-2"><BarChart2 className="w-4 h-4"/>Continuous Value</span>
+                        <span className="font-medium text-sm flex items-center gap-2"><BarChart2 className="w-4 h-4"/>Valor Continuo</span>
                         <p className="text-2xl font-bold">{evaluation.continuousValue.toFixed(2)}</p>
                     </div>
                 </div>
@@ -120,8 +120,8 @@ export default function PatientDetailView({ patient }: PatientDetailViewProps) {
   const handleRemoveEvaluation = (evaluationId: string) => {
     dispatch({ type: 'REMOVE_EVALUATION', payload: { patientId: patient.id, evaluationId }});
     toast({
-      title: "Evaluation Removed",
-      description: "The evaluation record has been deleted.",
+      title: "Evaluación Eliminada",
+      description: "El registro de evaluación ha sido eliminado.",
     });
   };
 
@@ -139,35 +139,35 @@ export default function PatientDetailView({ patient }: PatientDetailViewProps) {
 
       <Tabs defaultValue="details">
         <TabsList className="grid w-full grid-cols-2 md:w-[400px]">
-          <TabsTrigger value="details"><Info className="w-4 h-4 mr-2"/> Details</TabsTrigger>
-          <TabsTrigger value="evaluations"><ListChecks className="w-4 h-4 mr-2"/> Evaluations</TabsTrigger>
+          <TabsTrigger value="details"><Info className="w-4 h-4 mr-2"/> Detalles</TabsTrigger>
+          <TabsTrigger value="evaluations"><ListChecks className="w-4 h-4 mr-2"/> Evaluaciones</TabsTrigger>
         </TabsList>
         <TabsContent value="details" className="mt-6">
             <div className="grid gap-6 md:grid-cols-2">
                 <Card>
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2 text-lg"><User className="w-5 h-5 text-primary" />Patient Information</CardTitle>
+                        <CardTitle className="flex items-center gap-2 text-lg"><User className="w-5 h-5 text-primary" />Información del Paciente</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <DetailRow label="Name" value={patient.name} />
-                        <DetailRow label="Primary Diagnosis" value={patient.diagnosis} />
-                        <DetailRow label="Bed Assignment" value={`${patient.bedNumber} (${patient.bedType})`} />
+                        <DetailRow label="Nombre" value={patient.name} />
+                        <DetailRow label="Diagnóstico Primario" value={patient.diagnosis} />
+                        <DetailRow label="Asignación de Cama" value={`${patient.bedNumber} (${patient.bedType})`} />
                     </CardContent>
                 </Card>
-                <ListCard title="Comorbidities" items={patient.comorbidities} icon={ShieldPlus} />
-                <ListCard title="Medications" items={patient.medications} icon={Pill} />
-                <ListCard title="Treatments" items={patient.treatments} icon={Activity} />
-                <ListCard title="Surgical Procedures" items={patient.surgicalProcedures} icon={Stethoscope} />
-                <ListCard title="Supplies" items={patient.supplies} icon={Box} />
+                <ListCard title="Comorbilidades" items={patient.comorbidities} icon={ShieldPlus} />
+                <ListCard title="Medicamentos" items={patient.medications} icon={Pill} />
+                <ListCard title="Tratamientos" items={patient.treatments} icon={Activity} />
+                <ListCard title="Procedimientos Quirúrgicos" items={patient.surgicalProcedures} icon={Stethoscope} />
+                <ListCard title="Suministros" items={patient.supplies} icon={Box} />
             </div>
         </TabsContent>
         <TabsContent value="evaluations" className="mt-6">
             <div className="flex justify-end gap-2 mb-4">
                 <Button onClick={() => router.push(`/patients/${patient.id}/evaluations/add?type=treatment`)}>
-                    <PlusCircle className="w-4 h-4 mr-2"/> Add Treatment Eval
+                    <PlusCircle className="w-4 h-4 mr-2"/> Añadir Eval. de Tratamiento
                 </Button>
                 <Button onClick={() => router.push(`/patients/${patient.id}/evaluations/add?type=surgical`)}>
-                    <PlusCircle className="w-4 h-4 mr-2"/> Add Surgical Eval
+                    <PlusCircle className="w-4 h-4 mr-2"/> Añadir Eval. Quirúrgica
                 </Button>
             </div>
             {patient.evaluations.length > 0 ? (
@@ -179,8 +179,8 @@ export default function PatientDetailView({ patient }: PatientDetailViewProps) {
             ) : (
                 <div className="text-center py-16 border-2 border-dashed rounded-lg">
                     <ListChecks className="mx-auto h-12 w-12 text-muted-foreground" />
-                    <h3 className="mt-2 text-lg font-medium">No evaluations recorded</h3>
-                    <p className="mt-1 text-sm text-muted-foreground">Add a new evaluation to track patient progress.</p>
+                    <h3 className="mt-2 text-lg font-medium">No hay evaluaciones registradas</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">Añade una nueva evaluación para seguir el progreso del paciente.</p>
                 </div>
             )}
         </TabsContent>

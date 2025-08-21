@@ -43,7 +43,7 @@ const PatientEditPage = () => {
   };
 
   if (loading) {
-    return <div>Loading patient data...</div>;
+    return <div>Cargando datos del paciente...</div>;
   }
 
   if (error) {
@@ -51,12 +51,12 @@ const PatientEditPage = () => {
   }
 
   if (!patient) {
-    return <div>Patient not found.</div>;
+    return <div>Paciente no encontrado.</div>;
   }
 
   return (
     <div>
-      <h1>Edit Patient</h1>
+      <h1>Editar Paciente</h1>
       <EditPatientForm initialData={patient} onSubmit={handleUpdatePatient} />
     </div>
   );

@@ -17,8 +17,8 @@ import { Lightbulb, Loader2, User, Stethoscope, Bed, CirclePlus, Trash2 } from '
 import DiagnosisAssistantDialog from './diagnosis-assistant-dialog';
 
 const patientSchema = z.object({
-  name: z.string().min(1, 'Patient name is required.'),
-  diagnosis: z.string().min(1, 'Primary diagnosis is required.'),
+  name: z.string().min(1, 'El nombre del paciente es requerido.'),
+  diagnosis: z.string().min(1, 'El diagnóstico primario es requerido.'),
   comorbidities: z.array(z.string()),
   medications: z.array(z.string()),
   treatments: z.array(z.string()),
@@ -55,10 +55,10 @@ const EditableList = ({ control, name, title, icon: Icon }: { control: any, name
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={(e) => { if(e.key === 'Enter') { e.preventDefault(); handleAdd();}}}
-            placeholder={`Add a ${title.toLowerCase().slice(0, -1)}...`}
+            placeholder={`Añadir un ${title.toLowerCase().slice(0, -1)}...`}
             className="flex-grow"
           />
-          <Button type="button" onClick={handleAdd}><CirclePlus className="w-4 h-4 mr-2" />Add</Button>
+          <Button type="button" onClick={handleAdd}><CirclePlus className="w-4 h-4 mr-2" />Añadir</Button>
         </div>
         <div className="flex flex-wrap gap-2">
           {fields.map((field, index) => (
@@ -70,7 +70,7 @@ const EditableList = ({ control, name, title, icon: Icon }: { control: any, name
             </div>
           ))}
         </div>
-         {fields.length === 0 && <p className="text-sm text-muted-foreground mt-2">No {title.toLowerCase()} added yet.</p>}
+         {fields.length === 0 && <p className="text-sm text-muted-foreground mt-2">No se han añadido {title.toLowerCase()} aún.</p>}
       </CardContent>
     </Card>
   );
@@ -104,7 +104,7 @@ export default function AddPatientForm() {
 
   const handleSuggestComorbidities = async () => {
     if (!diagnosis) {
-        toast({ title: "Diagnosis Needed", description: "Please enter a primary diagnosis first.", variant: "destructive" });
+        toast({ title: "Diagnóstico Requerido", description: "Por favor, ingrese un diagnóstico primario primero.", variant: "destructive" });
         return;
     }
     setIsSuggesting(true);
@@ -116,9 +116,9 @@ export default function AddPatientForm() {
         if(toAdd.length > 0) {
             form.setValue('comorbidities', [...form.getValues('comorbidities'), ...toAdd]);
         }
-        toast({ title: "Suggestions Added", description: `${toAdd.length} new comorbidities suggested and added.` });
+        toast({ title: "Sugerencias Añadidas", description: `${toAdd.length} nuevas comorbilidades sugeridas y añadidas.` });
     } catch (error) {
-        toast({ title: "AI Error", description: "Could not fetch suggestions.", variant: "destructive" });
+        toast({ title: "Error de IA", description: "No se pudieron obtener sugerencias.", variant: "destructive" });
     } finally {
         setIsSuggesting(false);
     }
@@ -133,8 +133,8 @@ export default function AddPatientForm() {
     };
     dispatch({ type: 'ADD_PATIENT', payload: newPatient });
     toast({
-      title: "Patient Added",
-      description: `${data.name} has been successfully added.`,
+      title: "Paciente Añadido",
+      description: `${data.name} ha sido añadido exitosamente.`,
     });
     router.push('/patients');
   }
@@ -144,7 +144,7 @@ export default function AddPatientForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg font-semibold">Patient Information</CardTitle>
+            <CardTitle className="text-lg font-semibold">Información del Paciente</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <FormField
@@ -152,7 +152,7 @@ export default function AddPatientForm() {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Patient Name</FormLabel>
+                  <FormLabel>Nombre del Paciente</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -169,11 +169,11 @@ export default function AddPatientForm() {
               name="diagnosis"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Primary Diagnosis</FormLabel>
+                  <FormLabel>Diagnóstico Primario</FormLabel>
                     <div className="flex gap-2 items-start">
                         <div className="relative flex-grow">
                             <Stethoscope className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input placeholder="e.g., Type 2 Diabetes" {...field} className="pl-10" />
+                            <Input placeholder="ej., Diabetes Tipo 2" {...field} className="pl-10" />
                         </div>
                         <DiagnosisAssistantDialog 
                             currentValues={formValues}
@@ -191,11 +191,11 @@ export default function AddPatientForm() {
                 name="bedType"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Bed Type</FormLabel>
+                    <FormLabel>Tipo de Cama</FormLabel>
                     <FormControl>
                       <div className="relative">
                          <Bed className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                         <Input placeholder="e.g., ICU, General" {...field} className="pl-10" />
+                         <Input placeholder="ej., UCI, General" {...field} className="pl-10" />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -207,9 +207,9 @@ export default function AddPatientForm() {
                 name="bedNumber"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Bed Number</FormLabel>
+                    <FormLabel>Número de Cama</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g., 101-B" {...field} />
+                      <Input placeholder="ej., 101-B" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -223,18 +223,18 @@ export default function AddPatientForm() {
             <div className="flex justify-end">
                 <Button type="button" variant="outline" onClick={handleSuggestComorbidities} disabled={isSuggesting || !diagnosis}>
                     {isSuggesting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Lightbulb className="mr-2 h-4 w-4" />}
-                    Suggest Comorbidities
+                    Sugerir Comorbilidades
                 </Button>
             </div>
-          <EditableList control={control} name="comorbidities" title="Comorbidities" icon={Stethoscope} />
-          <EditableList control={control} name="medications" title="Medications" icon={User} />
-          <EditableList control={control} name="treatments" title="Treatments" icon={User} />
-          <EditableList control={control} name="surgicalProcedures" title="Surgical Procedures" icon={User} />
-          <EditableList control={control} name="supplies" title="Supplies" icon={User} />
+          <EditableList control={control} name="comorbidities" title="Comorbilidades" icon={Stethoscope} />
+          <EditableList control={control} name="medications" title="Medicamentos" icon={User} />
+          <EditableList control={control} name="treatments" title="Tratamientos" icon={User} />
+          <EditableList control={control} name="surgicalProcedures" title="Procedimientos Quirúrgicos" icon={User} />
+          <EditableList control={control} name="supplies" title="Suministros" icon={User} />
         </div>
 
         <div className="flex justify-end">
-          <Button type="submit" size="lg">Save Patient</Button>
+          <Button type="submit" size="lg">Guardar Paciente</Button>
         </div>
       </form>
     </Form>

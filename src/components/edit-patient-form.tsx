@@ -25,10 +25,10 @@ import { useParams } from 'next/navigation' // Import useParams
 
 const formSchema = z.object({
   name: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
+    message: "El nombre debe tener al menos 2 caracteres.",
   }),
   dateOfBirth: z.date({
-    required_error: "A date of birth is required.",
+    required_error: "Se requiere una fecha de nacimiento.",
   }),
   // Add other relevant patient fields with validation
   // e.g., address: z.string().optional(),
@@ -63,7 +63,7 @@ export function EditPatientForm({ patient, onUpdate }: EditPatientFormProps) {
     const patientToUpdate = patients.find(p => p.id === patientId);
     if (!patientToUpdate) {
       toast({
-        title: "Patient not found.",
+        title: "Paciente no encontrado.",
         variant: "destructive",
       });
       return;
@@ -71,11 +71,11 @@ export function EditPatientForm({ patient, onUpdate }: EditPatientFormProps) {
     try {
       await updatePatient(patientId, values);
       toast({
-        title: "Patient updated successfully.",
+        title: "Paciente actualizado exitosamente.",
       });
       router.push(`/patients/${patientId}`); // Redirect to the patient detail page
     } catch (error) {
-      console.error("Error updating patient:", error);
+      console.error("Error al actualizar el paciente:", error);
       toast({
       variant: "destructive",
     });
@@ -93,9 +93,9 @@ export function EditPatientForm({ patient, onUpdate }: EditPatientFormProps) {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>Nombre</FormLabel>
               <FormControl>
-                <Input placeholder="Patient Name" {...field} />
+                <Input placeholder="Nombre del Paciente" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -106,7 +106,7 @@ export function EditPatientForm({ patient, onUpdate }: EditPatientFormProps) {
           name="dateOfBirth"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel>Date of birth</FormLabel>
+              <FormLabel>Fecha de nacimiento</FormLabel>
               <Popover>
                 <PopoverTrigger asChild>
                   <FormControl>
@@ -120,7 +120,7 @@ export function EditPatientForm({ patient, onUpdate }: EditPatientFormProps) {
                       {field.value ? (
                         format(field.value, "PPP")
                       ) : (
-                        <span>Pick a date</span>
+                        <span>Elige una fecha</span>
                       )}
                       <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                     </Button>
@@ -143,7 +143,7 @@ export function EditPatientForm({ patient, onUpdate }: EditPatientFormProps) {
           )}
         />
         {/* Add other form fields here */}
-        <Button type="submit">Update Patient</Button>
+        <Button type="submit">Actualizar Paciente</Button>
       </form>
     </Form>
   );
