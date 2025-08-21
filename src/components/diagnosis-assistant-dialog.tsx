@@ -94,7 +94,7 @@ export default function DiagnosisAssistantDialog({ currentValues, setDiagnosis }
           AI Assistant
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[625px]">
+      <DialogContent className="sm:max-w-[625px] grid-rows-[auto_minmax(0,1fr)_auto] max-h-[90vh]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="text-primary" />
@@ -156,36 +156,38 @@ export default function DiagnosisAssistantDialog({ currentValues, setDiagnosis }
             </form>
           </Form>
         ) : (
-          <div className="space-y-4 py-4">
-            <Card>
-              <CardHeader><CardTitle>Suggested Diagnoses</CardTitle></CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2">
-                  {result.suggestedDiagnoses.split(',').map(d => d.trim()).filter(Boolean).map(diag => (
-                    <Button key={diag} size="sm" variant="secondary" onClick={() => handleUseDiagnosis(diag)}>Use "{diag}"</Button>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader><CardTitle>Confidence Levels</CardTitle></CardHeader>
-              <CardContent>
-                <p>{result.confidenceLevels}</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader><CardTitle>Recommended Additional Tests</CardTitle></CardHeader>
-              <CardContent>
-                <p>{result.additionalTests}</p>
-              </CardContent>
-            </Card>
+          <>
+            <div className="space-y-4 py-4 overflow-y-auto px-1">
+              <Card>
+                <CardHeader><CardTitle>Suggested Diagnoses</CardTitle></CardHeader>
+                <CardContent>
+                  <div className="flex flex-wrap gap-2">
+                    {result.suggestedDiagnoses.split(',').map(d => d.trim()).filter(Boolean).map(diag => (
+                      <Button key={diag} size="sm" variant="secondary" onClick={() => handleUseDiagnosis(diag)}>Use "{diag}"</Button>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader><CardTitle>Confidence Levels</CardTitle></CardHeader>
+                <CardContent>
+                  <p>{result.confidenceLevels}</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader><CardTitle>Recommended Additional Tests</CardTitle></CardHeader>
+                <CardContent>
+                  <p>{result.additionalTests}</p>
+                </CardContent>
+              </Card>
+            </div>
             <DialogFooter>
                 <Button variant="outline" onClick={() => setResult(null)}>Back</Button>
                 <DialogClose asChild>
                     <Button type="button">Close</Button>
                 </DialogClose>
             </DialogFooter>
-          </div>
+          </>
         )}
       </DialogContent>
     </Dialog>
