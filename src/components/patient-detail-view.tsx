@@ -168,14 +168,14 @@ export default function PatientDetailView({ patient }: PatientDetailViewProps) {
                 </Card>
                 <Card>
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2 text-lg"><User className="w-5 h-5 text-primary" />Personal Médico</CardTitle>
+                        <CardTitle className="flex items-center gap-2 text-lg"><User className="w-5 h-5 text-primary" />Personal Clínico</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <DetailRow label="Enfermero Encargado" value={patient.nurseInCharge} />
                         <DetailRow label="Enfermero Supervisor" value={patient.supervisingNurse} />
                     </CardContent>
                 </Card>
-                <ListCard title="Médicos Tratantes" items={patient.treatingPhysicians} icon={Stethoscope} />
+                <ListCard title="Médico(s) Tratante(s)" items={patient.treatingPhysicians} icon={Stethoscope} />
                 <ListCard title="Comorbilidades" items={patient.comorbidities} icon={ShieldPlus} />
                 <ListCard title="Medicamentos" items={patient.medications} icon={Pill} />
                 <ListCard title="Tratamientos" items={patient.treatments} icon={Activity} />

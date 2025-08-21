@@ -191,7 +191,7 @@ const AddPatientFormContent = () => {
         
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg font-semibold">Personal Médico</CardTitle>
+            <CardTitle className="text-lg font-semibold">Personal Clínico</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -228,7 +228,7 @@ const AddPatientFormContent = () => {
                 )}
               />
             </div>
-             <EditableList name="treatingPhysicians" title="Médicos Tratantes" icon={Stethoscope} />
+             <EditableList name="treatingPhysicians" title="Médico(s) Tratante(s)" icon={Stethoscope} />
           </CardContent>
         </Card>
 
