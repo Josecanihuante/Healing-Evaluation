@@ -16,7 +16,7 @@ import {
   TabsTrigger,
 } from '@/components/ui/tabs';
 import {
-    User, Stethoscope, Bed, Pill, Activity, ShieldPlus, Box, Info, ListChecks, Calendar, Scale, BarChart2, PlusCircle, Trash2, Pencil
+    User, Stethoscope, Bed, Pill, Activity, ShieldPlus, Box, Info, ListChecks, Calendar, Scale, BarChart2, PlusCircle, Trash2, Pencil, UserMd, UserNurse
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -36,8 +36,8 @@ const DetailRow = ({ label, value }: { label: string, value: React.ReactNode }) 
   </div>
 );
 
-const ListCard = ({ title, items, icon: Icon }: { title: string, items: string[], icon: React.ElementType }) => {
-    if (items.length === 0) return null;
+const ListCard = ({ title, items, icon: Icon }: { title: string, items: string[] | undefined, icon: React.ElementType }) => {
+    if (!items || items.length === 0) return null;
     return (
         <Card>
             <CardHeader>
@@ -166,6 +166,16 @@ export default function PatientDetailView({ patient }: PatientDetailViewProps) {
                         <DetailRow label="Asignación de Cama" value={`${patient.bedNumber} (${patient.bedType})`} />
                     </CardContent>
                 </Card>
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-lg"><UserMd className="w-5 h-5 text-primary" />Personal Médico</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <DetailRow label="Enfermero Encargado" value={patient.nurseInCharge} />
+                        <DetailRow label="Enfermero Supervisor" value={patient.supervisingNurse} />
+                    </CardContent>
+                </Card>
+                <ListCard title="Médicos Tratantes" items={patient.treatingPhysicians} icon={UserMd} />
                 <ListCard title="Comorbilidades" items={patient.comorbidities} icon={ShieldPlus} />
                 <ListCard title="Medicamentos" items={patient.medications} icon={Pill} />
                 <ListCard title="Tratamientos" items={patient.treatments} icon={Activity} />

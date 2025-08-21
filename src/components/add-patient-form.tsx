@@ -13,7 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Lightbulb, Loader2, User, Stethoscope, Bed, ShieldPlus, Pill, Activity, Box } from 'lucide-react';
+import { Lightbulb, Loader2, User, Stethoscope, Bed, ShieldPlus, Pill, Activity, Box, UserMd, UserNurse } from 'lucide-react';
 import DiagnosisAssistantDialog from './diagnosis-assistant-dialog';
 import { EditableList } from './editable-list';
 
@@ -27,6 +27,9 @@ const patientSchema = z.object({
   supplies: z.array(z.object({ value: z.string() })),
   bedType: z.string(),
   bedNumber: z.string(),
+  treatingPhysicians: z.array(z.object({ value: z.string() })),
+  nurseInCharge: z.string(),
+  supervisingNurse: z.string(),
 });
 
 export type PatientFormValues = z.infer<typeof patientSchema>;
@@ -49,10 +52,13 @@ const AddPatientFormContent = () => {
       supplies: [],
       bedType: '',
       bedNumber: '',
+      treatingPhysicians: [],
+      nurseInCharge: '',
+      supervisingNurse: '',
     },
   });
 
-  const { control, watch, getValues, setValue } = methods;
+  const { control, watch, getValues, setValue, handleSubmit, trigger } = methods;
   const diagnosis = watch('diagnosis');
   const formValues = watch();
 
@@ -91,6 +97,9 @@ const AddPatientFormContent = () => {
       surgicalProcedures: data.surgicalProcedures.map(i => i.value),
       supplies: data.supplies.map(i => i.value),
       evaluations: [],
+      treatingPhysicians: data.treatingPhysicians.map(i => i.value),
+      nurseInCharge: data.nurseInCharge,
+      supervisingNurse: data.supervisingNurse,
     };
     dispatch({ type: 'ADD_PATIENT', payload: newPatient });
     toast({
@@ -102,7 +111,7 @@ const AddPatientFormContent = () => {
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <Card>
           <CardHeader>
             <CardTitle className="text-lg font-semibold">Información del Paciente</CardTitle>
@@ -179,6 +188,50 @@ const AddPatientFormContent = () => {
             </div>
           </CardContent>
         </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold">Personal Médico</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+               <FormField
+                control={control}
+                name="nurseInCharge"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Enfermero Encargado</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <UserNurse className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input placeholder="Nombre del enfermero" {...field} className="pl-10" />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={control}
+                name="supervisingNurse"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Enfermero Supervisor</FormLabel>
+                     <FormControl>
+                      <div className="relative">
+                        <UserNurse className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input placeholder="Nombre del supervisor" {...field} className="pl-10" />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+             <EditableList name="treatingPhysicians" title="Médicos Tratantes" icon={UserMd} />
+          </CardContent>
+        </Card>
+
 
         <div className="space-y-4">
           <div className="flex justify-end">

@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { User, Stethoscope, Bed, ShieldPlus, Pill, Activity, Box } from "lucide-react";
+import { User, Stethoscope, Bed, ShieldPlus, Pill, Activity, Box, UserMd, UserNurse } from "lucide-react";
 import { EditableList } from "./editable-list";
 
 
@@ -26,6 +26,9 @@ const formSchema = z.object({
   treatments: z.array(z.object({ value: z.string() })),
   surgicalProcedures: z.array(z.object({ value: z.string() })),
   supplies: z.array(z.object({ value: z.string() })),
+  treatingPhysicians: z.array(z.object({ value: z.string() })),
+  nurseInCharge: z.string(),
+  supervisingNurse: z.string(),
 });
 
 type PatientFormValues = z.infer<typeof formSchema>;
@@ -51,6 +54,9 @@ export function EditPatientForm({ patient }: EditPatientFormProps) {
       treatments: patient.treatments.map(value => ({ value })) || [],
       surgicalProcedures: patient.surgicalProcedures.map(value => ({ value })) || [],
       supplies: patient.supplies.map(value => ({ value })) || [],
+      treatingPhysicians: patient.treatingPhysicians?.map(value => ({ value })) || [],
+      nurseInCharge: patient.nurseInCharge || "",
+      supervisingNurse: patient.supervisingNurse || "",
     },
   });
 
@@ -67,6 +73,9 @@ export function EditPatientForm({ patient }: EditPatientFormProps) {
         treatments: values.treatments.map(i => i.value),
         surgicalProcedures: values.surgicalProcedures.map(i => i.value),
         supplies: values.supplies.map(i => i.value),
+        treatingPhysicians: values.treatingPhysicians.map(i => i.value),
+        nurseInCharge: values.nurseInCharge,
+        supervisingNurse: values.supervisingNurse,
       };
       
       dispatch({ type: 'UPDATE_PATIENT', payload: updatedPatient });
@@ -157,6 +166,49 @@ export function EditPatientForm({ patient }: EditPatientFormProps) {
                 )}
               />
             </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold">Personal Médico</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+               <FormField
+                control={methods.control}
+                name="nurseInCharge"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Enfermero Encargado</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <UserNurse className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input placeholder="Nombre del enfermero" {...field} className="pl-10" />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={methods.control}
+                name="supervisingNurse"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Enfermero Supervisor</FormLabel>
+                     <FormControl>
+                      <div className="relative">
+                        <UserNurse className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input placeholder="Nombre del supervisor" {...field} className="pl-10" />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+             <EditableList name="treatingPhysicians" title="Médicos Tratantes" icon={UserMd} />
           </CardContent>
         </Card>
 

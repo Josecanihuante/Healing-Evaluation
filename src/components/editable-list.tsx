@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { CirclePlus, Trash2 } from 'lucide-react';
 
 interface EditableListProps {
-  name: "comorbidities" | "medications" | "treatments" | "surgicalProcedures" | "supplies";
+  name: "comorbidities" | "medications" | "treatments" | "surgicalProcedures" | "supplies" | "treatingPhysicians";
   title: string;
   icon: React.ElementType;
 }

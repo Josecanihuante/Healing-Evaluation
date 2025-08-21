@@ -20,4 +20,7 @@ export interface Patient {
   bedType: string;
   bedNumber: string;
   evaluations: Evaluation[];
+  treatingPhysicians: string[];
+  nurseInCharge: string;
+  supervisingNurse: string;
 }
