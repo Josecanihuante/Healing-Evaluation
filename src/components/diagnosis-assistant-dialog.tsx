@@ -105,82 +105,82 @@ export default function DiagnosisAssistantDialog({ currentValues, setDiagnosis }
           </DialogDescription>
         </DialogHeader>
         
-        {!result ? (
-          <div className="flex-grow overflow-y-auto pr-6 -mr-6">
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} id="diagnosis-form" className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="symptoms"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Symptoms or Current Diagnosis</FormLabel>
-                      <FormControl>
-                        <Textarea placeholder="e.g., Persistent cough, fever, shortness of breath... or a working diagnosis" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="medicalHistory"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Medical History</FormLabel>
-                      <FormControl>
-                        <Textarea placeholder="e.g., History of asthma, non-smoker..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="otherRelevantInformation"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Other Relevant Information</FormLabel>
-                      <FormControl>
-                        <Textarea placeholder="e.g., Recent travel to..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </form>
-            </Form>
-          </div>
-        ) : (
-          <div className="space-y-4 overflow-y-auto pr-6 -mr-6">
-            <Card>
-              <CardHeader><CardTitle>Suggested Diagnoses</CardTitle></CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2">
-                  {result.suggestedDiagnoses.split(',').map(d => d.trim()).filter(Boolean).map(diag => (
-                    <Button key={diag} size="sm" variant="secondary" onClick={() => handleUseDiagnosis(diag)}>Use "{diag}"</Button>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader><CardTitle>Confidence Levels</CardTitle></CardHeader>
-              <CardContent>
-                <p>{result.confidenceLevels}</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader><CardTitle>Recommended Additional Tests</CardTitle></CardHeader>
-              <CardContent>
-                <p>{result.additionalTests}</p>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-
-        <DialogFooter>
+        <div className="flex-grow overflow-y-auto pr-6 -mr-6">
           {!result ? (
-            <Button type="submit" form="diagnosis-form" disabled={isLoading}>
+              <Form {...form}>
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="symptoms"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Symptoms or Current Diagnosis</FormLabel>
+                        <FormControl>
+                          <Textarea placeholder="e.g., Persistent cough, fever, shortness of breath... or a working diagnosis" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="medicalHistory"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Medical History</FormLabel>
+                        <FormControl>
+                          <Textarea placeholder="e.g., History of asthma, non-smoker..." {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="otherRelevantInformation"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Other Relevant Information</FormLabel>
+                        <FormControl>
+                          <Textarea placeholder="e.g., Recent travel to..." {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </Form>
+          ) : (
+            <div className="space-y-4">
+              <Card>
+                <CardHeader><CardTitle>Suggested Diagnoses</CardTitle></CardHeader>
+                <CardContent>
+                  <div className="flex flex-wrap gap-2">
+                    {result.suggestedDiagnoses.split(',').map(d => d.trim()).filter(Boolean).map(diag => (
+                      <Button key={diag} size="sm" variant="secondary" onClick={() => handleUseDiagnosis(diag)}>Use "{diag}"</Button>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader><CardTitle>Confidence Levels</CardTitle></CardHeader>
+                <CardContent>
+                  <p>{result.confidenceLevels}</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader><CardTitle>Recommended Additional Tests</CardTitle></CardHeader>
+                <CardContent>
+                  <p>{result.additionalTests}</p>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+        </div>
+
+        <DialogFooter className="flex-shrink-0">
+          {!result ? (
+            <Button type="button" onClick={form.handleSubmit(onSubmit)} disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Get Suggestions
             </Button>
