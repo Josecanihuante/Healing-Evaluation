@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { usePatientContext } from '@/context/PatientContext';
 import { type Patient } from "@/lib/types";
 
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
