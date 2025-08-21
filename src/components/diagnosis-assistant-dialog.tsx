@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { diagnosisAssistant, type DiagnosisAssistantOutput } from '@/ai/flows/diagnosis-assistant';
@@ -35,7 +35,7 @@ export default function DiagnosisAssistantDialog({ currentValues, setDiagnosis }
   const [result, setResult] = useState<DiagnosisAssistantOutput | null>(null);
   const [isOpen, setIsOpen] = useState(false);
 
-  const form = useForm<DiagnosisFormValues>({
+  const methods = useForm<DiagnosisFormValues>({
     resolver: zodResolver(diagnosisSchema),
     defaultValues: {
       symptoms: '',
@@ -46,17 +46,15 @@ export default function DiagnosisAssistantDialog({ currentValues, setDiagnosis }
 
   useEffect(() => {
     if (isOpen) {
-        form.setValue('symptoms', currentValues.diagnosis || '');
+        methods.setValue('symptoms', currentValues.diagnosis || '');
     }
-  }, [isOpen, currentValues, form]);
+  }, [isOpen, currentValues, methods]);
 
-
-  const handleSubmit = useCallback(async () => {
-    const isFormValid = await form.trigger();
-    if (!isFormValid) {
-        return;
-    }
-    const data = form.getValues();
+  const handleGetSuggestions = async () => {
+    const isValid = await methods.trigger();
+    if (!isValid) return;
+    
+    const data = methods.getValues();
     setIsLoading(true);
     setResult(null);
     try {
@@ -72,7 +70,7 @@ export default function DiagnosisAssistantDialog({ currentValues, setDiagnosis }
     } finally {
       setIsLoading(false);
     }
-  }, [form, toast]);
+  };
   
   const handleUseDiagnosis = (diagnosis: string) => {
     setDiagnosis(diagnosis);
@@ -85,7 +83,7 @@ export default function DiagnosisAssistantDialog({ currentValues, setDiagnosis }
 
   const resetDialog = (open: boolean) => {
     if (!open) {
-      form.reset();
+      methods.reset();
       setResult(null);
       setIsLoading(false);
     }
@@ -113,10 +111,10 @@ export default function DiagnosisAssistantDialog({ currentValues, setDiagnosis }
         
         <div className="flex-grow overflow-y-auto pr-6 -mr-6">
           {!result ? (
-              <Form {...form}>
-                <div className="space-y-4">
+              <FormProvider {...methods}>
+                <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
                   <FormField
-                    control={form.control}
+                    control={methods.control}
                     name="symptoms"
                     render={({ field }) => (
                       <FormItem>
@@ -129,7 +127,7 @@ export default function DiagnosisAssistantDialog({ currentValues, setDiagnosis }
                     )}
                   />
                   <FormField
-                    control={form.control}
+                    control={methods.control}
                     name="medicalHistory"
                     render={({ field }) => (
                       <FormItem>
@@ -142,7 +140,7 @@ export default function DiagnosisAssistantDialog({ currentValues, setDiagnosis }
                     )}
                   />
                   <FormField
-                    control={form.control}
+                    control={methods.control}
                     name="otherRelevantInformation"
                     render={({ field }) => (
                       <FormItem>
@@ -154,8 +152,8 @@ export default function DiagnosisAssistantDialog({ currentValues, setDiagnosis }
                       </FormItem>
                     )}
                   />
-                </div>
-              </Form>
+                </form>
+              </FormProvider>
           ) : (
             <div className="space-y-4">
               <Card>
@@ -184,9 +182,9 @@ export default function DiagnosisAssistantDialog({ currentValues, setDiagnosis }
           )}
         </div>
 
-        <DialogFooter className="flex-shrink-0 pt-4">
+        <DialogFooter className="flex-shrink-0 pt-4 border-t mt-4">
           {!result ? (
-            <Button type="button" onClick={handleSubmit} disabled={isLoading}>
+            <Button type="button" onClick={handleGetSuggestions} disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Obtener Sugerencias
             </Button>

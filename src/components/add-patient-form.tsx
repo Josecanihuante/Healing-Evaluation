@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { usePatientContext } from '@/context/PatientContext';
@@ -13,30 +13,31 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Lightbulb, Loader2, User, Stethoscope, Bed, CirclePlus, Trash2 } from 'lucide-react';
+import { Lightbulb, Loader2, User, Stethoscope, Bed, CirclePlus, Trash2, Pill, Activity, ShieldPlus, Box } from 'lucide-react';
 import DiagnosisAssistantDialog from './diagnosis-assistant-dialog';
 
 const patientSchema = z.object({
   name: z.string().min(1, 'El nombre del paciente es requerido.'),
   diagnosis: z.string().min(1, 'El diagnóstico primario es requerido.'),
-  comorbidities: z.array(z.string()),
-  medications: z.array(z.string()),
-  treatments: z.array(z.string()),
-  surgicalProcedures: z.array(z.string()),
-  supplies: z.array(z.string()),
+  comorbidities: z.array(z.object({ value: z.string() })),
+  medications: z.array(z.object({ value: z.string() })),
+  treatments: z.array(z.object({ value: z.string() })),
+  surgicalProcedures: z.array(z.object({ value: z.string() })),
+  supplies: z.array(z.object({ value: z.string() })),
   bedType: z.string(),
   bedNumber: z.string(),
 });
 
 export type PatientFormValues = z.infer<typeof patientSchema>;
 
-const EditableList = ({ control, name, title, icon: Icon }: { control: any, name: keyof Omit<PatientFormValues, 'name' | 'diagnosis' | 'bedType' | 'bedNumber'>, title: string, icon: React.ElementType }) => {
+const EditableList = ({ name, title, icon: Icon }: { name: any, title: string, icon: React.ElementType }) => {
+  const { control } = useFormContext<PatientFormValues>();
   const { fields, append, remove } = useFieldArray({ control, name });
   const [inputValue, setInputValue] = useState('');
 
   const handleAdd = () => {
     if (inputValue.trim()) {
-      append(inputValue.trim() as never);
+      append({ value: inputValue.trim() });
       setInputValue('');
     }
   };
@@ -54,7 +55,7 @@ const EditableList = ({ control, name, title, icon: Icon }: { control: any, name
           <Input
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={(e) => { if(e.key === 'Enter') { e.preventDefault(); handleAdd();}}}
+            onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAdd(); } }}
             placeholder={`Añadir un ${title.toLowerCase().slice(0, -1)}...`}
             className="flex-grow"
           />
@@ -63,27 +64,26 @@ const EditableList = ({ control, name, title, icon: Icon }: { control: any, name
         <div className="flex flex-wrap gap-2">
           {fields.map((field, index) => (
             <div key={field.id} className="flex items-center gap-1 bg-secondary text-secondary-foreground rounded-full px-3 py-1 text-sm">
-              <span>{field.value as string}</span>
+              <span>{(field as { value: string }).value}</span>
               <button type="button" onClick={() => remove(index)} className="text-muted-foreground hover:text-destructive">
                 <Trash2 className="w-3 h-3" />
               </button>
             </div>
           ))}
         </div>
-         {fields.length === 0 && <p className="text-sm text-muted-foreground mt-2">No se han añadido {title.toLowerCase()} aún.</p>}
+        {fields.length === 0 && <p className="text-sm text-muted-foreground mt-2">No se han añadido {title.toLowerCase()} aún.</p>}
       </CardContent>
     </Card>
   );
 };
 
-
-export default function AddPatientForm() {
+const AddPatientFormContent = () => {
   const router = useRouter();
   const { dispatch } = usePatientContext();
   const { toast } = useToast();
   const [isSuggesting, setIsSuggesting] = useState(false);
-  
-  const form = useForm<PatientFormValues>({
+
+  const methods = useForm<PatientFormValues>({
     resolver: zodResolver(patientSchema),
     defaultValues: {
       name: '',
@@ -98,37 +98,44 @@ export default function AddPatientForm() {
     },
   });
 
-  const { control, watch } = form;
+  const { control, watch, getValues, setValue } = methods;
   const diagnosis = watch('diagnosis');
   const formValues = watch();
 
   const handleSuggestComorbidities = async () => {
     if (!diagnosis) {
-        toast({ title: "Diagnóstico Requerido", description: "Por favor, ingrese un diagnóstico primario primero.", variant: "destructive" });
-        return;
+      toast({ title: "Diagnóstico Requerido", description: "Por favor, ingrese un diagnóstico primario primero.", variant: "destructive" });
+      return;
     }
     setIsSuggesting(true);
     try {
-        const result = await suggestComorbidities({ diagnosis });
-        const existing = new Set(form.getValues('comorbidities'));
-        const toAdd = result.comorbidities.filter(c => !existing.has(c));
-        
-        if(toAdd.length > 0) {
-            form.setValue('comorbidities', [...form.getValues('comorbidities'), ...toAdd]);
-        }
-        toast({ title: "Sugerencias Añadidas", description: `${toAdd.length} nuevas comorbilidades sugeridas y añadidas.` });
+      const result = await suggestComorbidities({ diagnosis });
+      const existing = new Set(getValues('comorbidities').map(c => c.value));
+      const toAdd = result.comorbidities.filter(c => !existing.has(c)).map(c => ({ value: c }));
+
+      if (toAdd.length > 0) {
+        setValue('comorbidities', [...getValues('comorbidities'), ...toAdd]);
+      }
+      toast({ title: "Sugerencias Añadidas", description: `${toAdd.length} nuevas comorbilidades sugeridas y añadidas.` });
     } catch (error) {
-        toast({ title: "Error de IA", description: "No se pudieron obtener sugerencias.", variant: "destructive" });
+      toast({ title: "Error de IA", description: "No se pudieron obtener sugerencias.", variant: "destructive" });
     } finally {
-        setIsSuggesting(false);
+      setIsSuggesting(false);
     }
   };
 
-
   function onSubmit(data: PatientFormValues) {
     const newPatient = {
-      ...data,
       id: crypto.randomUUID(),
+      name: data.name,
+      diagnosis: data.diagnosis,
+      bedType: data.bedType,
+      bedNumber: data.bedNumber,
+      comorbidities: data.comorbidities.map(i => i.value),
+      medications: data.medications.map(i => i.value),
+      treatments: data.treatments.map(i => i.value),
+      surgicalProcedures: data.surgicalProcedures.map(i => i.value),
+      supplies: data.supplies.map(i => i.value),
       evaluations: [],
     };
     dispatch({ type: 'ADD_PATIENT', payload: newPatient });
@@ -140,15 +147,15 @@ export default function AddPatientForm() {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+    <FormProvider {...methods}>
+      <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6">
         <Card>
           <CardHeader>
             <CardTitle className="text-lg font-semibold">Información del Paciente</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <FormField
-              control={form.control}
+              control={control}
               name="name"
               render={({ field }) => (
                 <FormItem>
@@ -163,39 +170,39 @@ export default function AddPatientForm() {
                 </FormItem>
               )}
             />
-            
+
             <FormField
-              control={form.control}
+              control={control}
               name="diagnosis"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Diagnóstico Primario</FormLabel>
-                    <div className="flex gap-2 items-start">
-                        <div className="relative flex-grow">
-                            <Stethoscope className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input placeholder="ej., Diabetes Tipo 2" {...field} className="pl-10" />
-                        </div>
-                        <DiagnosisAssistantDialog 
-                            currentValues={formValues}
-                            setDiagnosis={(value) => form.setValue('diagnosis', value, { shouldValidate: true })} 
-                        />
+                  <div className="flex gap-2 items-start">
+                    <div className="relative flex-grow">
+                      <Stethoscope className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input placeholder="ej., Diabetes Tipo 2" {...field} className="pl-10" />
                     </div>
+                    <DiagnosisAssistantDialog
+                      currentValues={formValues}
+                      setDiagnosis={(value) => setValue('diagnosis', value, { shouldValidate: true })}
+                    />
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
-                control={form.control}
+                control={control}
                 name="bedType"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Tipo de Cama</FormLabel>
                     <FormControl>
                       <div className="relative">
-                         <Bed className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                         <Input placeholder="ej., UCI, General" {...field} className="pl-10" />
+                        <Bed className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input placeholder="ej., UCI, General" {...field} className="pl-10" />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -203,7 +210,7 @@ export default function AddPatientForm() {
                 )}
               />
               <FormField
-                control={form.control}
+                control={control}
                 name="bedNumber"
                 render={({ field }) => (
                   <FormItem>
@@ -220,23 +227,33 @@ export default function AddPatientForm() {
         </Card>
 
         <div className="space-y-4">
-            <div className="flex justify-end">
-                <Button type="button" variant="outline" onClick={handleSuggestComorbidities} disabled={isSuggesting || !diagnosis}>
-                    {isSuggesting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Lightbulb className="mr-2 h-4 w-4" />}
-                    Sugerir Comorbilidades
-                </Button>
-            </div>
-          <EditableList control={control} name="comorbidities" title="Comorbilidades" icon={Stethoscope} />
-          <EditableList control={control} name="medications" title="Medicamentos" icon={User} />
-          <EditableList control={control} name="treatments" title="Tratamientos" icon={User} />
-          <EditableList control={control} name="surgicalProcedures" title="Procedimientos Quirúrgicos" icon={User} />
-          <EditableList control={control} name="supplies" title="Suministros" icon={User} />
+          <div className="flex justify-end">
+            <Button type="button" variant="outline" onClick={handleSuggestComorbidities} disabled={isSuggesting || !diagnosis}>
+              {isSuggesting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Lightbulb className="mr-2 h-4 w-4" />}
+              Sugerir Comorbilidades
+            </Button>
+          </div>
+          <EditableList name="comorbidities" title="Comorbilidades" icon={ShieldPlus} />
+          <EditableList name="medications" title="Medicamentos" icon={Pill} />
+          <EditableList name="treatments" title="Tratamientos" icon={Activity} />
+          <EditableList name="surgicalProcedures" title="Procedimientos Quirúrgicos" icon={Stethoscope} />
+          <EditableList name="supplies" title="Suministros" icon={Box} />
         </div>
 
         <div className="flex justify-end">
           <Button type="submit" size="lg">Guardar Paciente</Button>
         </div>
       </form>
-    </Form>
+    </FormProvider>
   );
+}
+
+export default function AddPatientForm() {
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
+    return isClient ? <AddPatientFormContent /> : null;
 }
