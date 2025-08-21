@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
+import { useForm, useFieldArray, FormProvider, useFormContext } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { usePatientContext } from '@/context/PatientContext';
@@ -255,5 +255,9 @@ export default function AddPatientForm() {
         setIsClient(true);
     }, []);
 
-    return isClient ? <AddPatientFormContent /> : null;
+    if (!isClient) {
+        return null;
+    }
+
+    return <AddPatientFormContent />;
 }
