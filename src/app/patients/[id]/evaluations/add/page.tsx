@@ -2,12 +2,14 @@
 
 import { usePatientContext } from '@/context/PatientContext';
 import AddEvaluationForm from '@/components/add-evaluation-form';
-import { notFound, useSearchParams } from 'next/navigation';
+import { notFound, useParams, useSearchParams } from 'next/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
-export default function AddEvaluationPage({ params }: { params: { id: string } }) {
+export default function AddEvaluationPage() {
+  const params = useParams();
+  const patientId = Array.isArray(params.id) ? params.id[0] : params.id;
   const searchParams = useSearchParams();
   const type = searchParams.get('type');
   
@@ -30,7 +32,7 @@ export default function AddEvaluationPage({ params }: { params: { id: string } }
     );
   }
 
-  const patient = patients.find((p) => p.id === params.id);
+  const patient = patients.find((p) => p.id === patientId);
   
   if (!patient) {
      return (
