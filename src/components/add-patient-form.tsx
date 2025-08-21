@@ -6,17 +6,17 @@ import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { usePatientContext } from '@/context/PatientContext';
-import { suggestComorbidities } from '@/ai/flows/comorbidity-suggestion';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Lightbulb, Loader2, User, Stethoscope, Bed, ShieldPlus, Pill, Activity, Box } from 'lucide-react';
+import { User, Stethoscope, Bed, ShieldPlus, Pill, Activity, Box } from 'lucide-react';
 import DiagnosisAssistantDialog from './diagnosis-assistant-dialog';
 import { EditableList } from './editable-list';
 import { EditablePhysicianList } from './editable-physician-list';
+import ComorbiditySuggestionDialog from './comorbidity-suggestion-dialog';
 
 const patientSchema = z.object({
   name: z.string().min(1, 'El nombre del paciente es requerido.'),
@@ -39,7 +39,6 @@ const AddPatientFormContent = () => {
   const router = useRouter();
   const { dispatch } = usePatientContext();
   const { toast } = useToast();
-  const [isSuggesting, setIsSuggesting] = useState(false);
 
   const methods = useForm<PatientFormValues>({
     resolver: zodResolver(patientSchema),
@@ -63,25 +62,18 @@ const AddPatientFormContent = () => {
   const diagnosis = watch('diagnosis');
   const formValues = watch();
 
-  const handleSuggestComorbidities = async () => {
-    if (!diagnosis) {
-      toast({ title: "Diagnóstico Requerido", description: "Por favor, ingrese un diagnóstico primario primero.", variant: "destructive" });
-      return;
-    }
-    setIsSuggesting(true);
-    try {
-      const result = await suggestComorbidities({ diagnosis });
-      const existing = new Set(getValues('comorbidities').map(c => c.value));
-      const toAdd = result.comorbidities.filter(c => !existing.has(c)).map(c => ({ value: c }));
+  const handleApplyComorbidities = (comorbiditiesToAdd: string[]) => {
+    const existing = new Set(getValues('comorbidities').map(c => c.value));
+    const toAdd = comorbiditiesToAdd.filter(c => !existing.has(c));
 
-      if (toAdd.length > 0) {
-        setValue('comorbidities', [...getValues('comorbidities'), ...toAdd]);
-      }
-      toast({ title: "Sugerencias Añadidas", description: `${toAdd.length} nuevas comorbilidades sugeridas y añadidas.` });
-    } catch (error) {
-      toast({ title: "Error de IA", description: "No se pudieron obtener sugerencias.", variant: "destructive" });
-    } finally {
-      setIsSuggesting(false);
+    if (toAdd.length > 0) {
+        setValue('comorbidities', [
+            ...getValues('comorbidities'),
+            ...toAdd.map(value => ({ value }))
+        ]);
+        toast({ title: "Comorbilidades Añadidas", description: `${toAdd.length} nuevas comorbilidades añadidas.` });
+    } else {
+        toast({ title: "Sin Cambios", description: "No se añadieron nuevas comorbilidades.", variant: "default" });
     }
   };
 
@@ -258,10 +250,11 @@ const AddPatientFormContent = () => {
 
         <div className="space-y-4">
           <div className="flex justify-end">
-            <Button type="button" variant="outline" onClick={handleSuggestComorbidities} disabled={isSuggesting || !diagnosis}>
-              {isSuggesting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Lightbulb className="mr-2 h-4 w-4" />}
-              Sugerir Comorbilidades
-            </Button>
+            <ComorbiditySuggestionDialog 
+              diagnosis={diagnosis}
+              existingComorbidities={formValues.comorbidities}
+              onApplyComorbidities={handleApplyComorbidities}
+            />
           </div>
           <EditableList name="comorbidities" title="Comorbilidades" icon={ShieldPlus} />
           <EditableList name="medications" title="Medicamentos" icon={Pill} />
