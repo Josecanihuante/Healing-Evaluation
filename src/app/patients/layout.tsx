@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/Logo';
-import { Home, PlusCircle, User, Users } from 'lucide-react';
+import { Home, PlusCircle, User, Users, Stethoscope } from 'lucide-react';
 
 export default function PatientsLayout({
   children,
@@ -60,6 +60,18 @@ export default function PatientsLayout({
                 <Link href="/patients/add">
                   <PlusCircle />
                   <span>Añadir Paciente</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                isActive={pathname.startsWith('/doctors')}
+                tooltip="Médicos"
+              >
+                <Link href="/doctors">
+                  <Stethoscope />
+                  <span>Médicos</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

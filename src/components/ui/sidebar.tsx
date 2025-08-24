@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { usePathname } from "next/navigation"
 import { ChevronsLeft, ChevronsRight } from "lucide-react"
 import { useIsMobile } from "@/hooks/use-mobile"
 
@@ -14,6 +15,7 @@ import {
 import { cn } from "@/lib/utils"
 
 // --- 1. CONTEXT ---
+
 
 interface SidebarContextProps {
   isCollapsed: boolean
@@ -260,6 +262,7 @@ SidebarInset.displayName = "SidebarInset"
 
 // --- 6. EXPORTS ---
 
+// biome-ignore format: keep exports on separate lines for readability
 export {
   SidebarProvider,
   useSidebar,

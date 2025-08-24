@@ -1,10 +1,11 @@
 "use client";
 
-import React, { createContext, useReducer, useContext, useEffect, type ReactNode, type Dispatch } from 'react';
-import { type Patient, type Evaluation } from '@/lib/types';
+import React, { createContext, useReducer, useContext, useEffect, type ReactNode, type Dispatch, useMemo } from 'react';
+import { type Patient, type Evaluation, type TreatingPhysician } from '@/lib/types';
 
 interface PatientState {
   patients: Patient[];
+  doctors: TreatingPhysician[];
   isInitialized: boolean;
 }
 
@@ -19,28 +20,34 @@ type Action =
 
 const initialState: PatientState = {
   patients: [],
+  doctors: [],
   isInitialized: false,
 };
 
 function patientReducer(state: PatientState, action: Action): PatientState {
+  let newState: PatientState;
   switch (action.type) {
     case 'INITIALIZE':
-      return { patients: action.payload, isInitialized: true };
+      newState = { ...state, patients: action.payload, isInitialized: true };
+      break;
     case 'ADD_PATIENT':
-      return { ...state, patients: [...state.patients, action.payload] };
+      newState = { ...state, patients: [...state.patients, action.payload] };
+      break;
     case 'UPDATE_PATIENT':
-      return {
+      newState = {
         ...state,
         patients: state.patients.map(p => p.id === action.payload.id ? action.payload : p),
       };
+      break;
     case 'REMOVE_PATIENT':
-      return {
+      newState = {
         ...state,
         patients: state.patients.filter(p => p.id !== action.payload),
       };
+      break;
     case 'ADD_EVALUATION': {
       const { patientId, evaluation } = action.payload;
-      return {
+      newState = {
         ...state,
         patients: state.patients.map(p =>
           p.id === patientId
@@ -48,10 +55,11 @@ function patientReducer(state: PatientState, action: Action): PatientState {
             : p
         ),
       };
+      break;
     }
     case 'UPDATE_EVALUATION': {
       const { patientId, evaluation } = action.payload;
-      return {
+      newState = {
         ...state,
         patients: state.patients.map(p =>
           p.id === patientId
@@ -59,10 +67,11 @@ function patientReducer(state: PatientState, action: Action): PatientState {
             : p
         ),
       };
+      break;
     }
     case 'REMOVE_EVALUATION': {
       const { patientId, evaluationId } = action.payload;
-      return {
+      newState = {
         ...state,
         patients: state.patients.map(p =>
           p.id === patientId
@@ -70,10 +79,23 @@ function patientReducer(state: PatientState, action: Action): PatientState {
             : p
         ),
       };
+      break;
     }
     default:
-      return state;
+      newState = state;
   }
+  
+  // Recalculate doctors list
+  const allPhysicians = newState.patients.flatMap(p => p.treatingPhysicians);
+  const uniquePhysiciansMap = new Map<string, TreatingPhysician>();
+  allPhysicians.forEach(p => {
+    if (!uniquePhysiciansMap.has(p.name)) {
+      uniquePhysiciansMap.set(p.name, p);
+    }
+  });
+  newState.doctors = Array.from(uniquePhysiciansMap.values()).sort((a,b) => a.name.localeCompare(b.name));
+
+  return newState;
 }
 
 const PatientContext = createContext<{ state: PatientState; dispatch: Dispatch<Action> } | undefined>(undefined);
