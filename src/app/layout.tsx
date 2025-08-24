@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster"
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'CuraTrack - Sistema de Gestión de Pacientes',
+  title: 'Evaluación Clínica - Sistema de Gestión de Pacientes',
   description: 'Un sistema inteligente de gestión de pacientes.',
 };
 

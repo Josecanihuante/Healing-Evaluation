@@ -34,7 +34,7 @@ export default function DashboardLayout({
                 <Logo className="size-5 text-primary" />
               </Link>
             </Button>
-            <span className="font-headline text-lg font-semibold tracking-tight">CuraTrack</span>
+            <span className="font-headline text-lg font-semibold tracking-tight">Evaluación Clínica</span>
           </div>
         </SidebarHeader>
         <SidebarContent>
