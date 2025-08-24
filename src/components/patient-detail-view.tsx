@@ -99,7 +99,7 @@ const EvaluationCard = ({ patientId, evaluation, onRemove }: { patientId: string
                         </CardDescription>
                     </div>
                      <div className="flex items-center gap-2">
-                         <Button variant="ghost" size="icon" onClick={() => router.push(`/patients/${patientId}/evaluations/${evaluation.id}/edit`)}>
+                         <Button variant="ghost" size="icon" onClick={() => router.push(`/dashboard/patients/${patientId}/evaluations/${evaluation.id}/edit`)}>
                             <Pencil className="w-4 h-4 text-muted-foreground" />
                         </Button>
                         <AlertDialog>
@@ -167,7 +167,7 @@ export default function PatientDetailView({ patient }: PatientDetailViewProps) {
                 <Stethoscope className="w-4 h-4" /> {patient.diagnosis}
             </p>
         </div>
-        <Button variant="outline" onClick={() => router.push(`/patients/${patient.id}/edit`)}>
+        <Button variant="outline" onClick={() => router.push(`/dashboard/patients/${patient.id}/edit`)}>
             <Pencil className="w-4 h-4 mr-2" />
             Editar Paciente
         </Button>
@@ -209,10 +209,10 @@ export default function PatientDetailView({ patient }: PatientDetailViewProps) {
         </TabsContent>
         <TabsContent value="evaluations" className="mt-6">
             <div className="flex justify-end gap-2 mb-4">
-                <Button onClick={() => router.push(`/patients/${patient.id}/evaluations/add?type=treatment`)}>
+                <Button onClick={() => router.push(`/dashboard/patients/${patient.id}/evaluations/add?type=treatment`)}>
                     <PlusCircle className="w-4 h-4 mr-2"/> Añadir Eval. de Tratamiento
                 </Button>
-                <Button onClick={() => router.push(`/patients/${patient.id}/evaluations/add?type=surgical`)}>
+                <Button onClick={() => router.push(`/dashboard/patients/${patient.id}/evaluations/add?type=surgical`)}>
                     <PlusCircle className="w-4 h-4 mr-2"/> Añadir Eval. Quirúrgica
                 </Button>
             </div>

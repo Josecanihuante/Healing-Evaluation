@@ -58,7 +58,7 @@ const DoctorEvaluationsPage: React.FC = () => {
     <div className="p-4 md:p-8">
       <header className="mb-6">
         <Button asChild variant="outline" className="mb-4">
-          <Link href="/doctors"><ArrowLeft className="w-4 h-4 mr-2" />Volver a la lista de Médicos</Link>
+          <Link href="/dashboard/doctors"><ArrowLeft className="w-4 h-4 mr-2" />Volver a la lista de Médicos</Link>
         </Button>
         <h1 className="text-3xl font-bold font-headline">{doctorName}</h1>
         <p className="text-muted-foreground">{doctor?.specialty}</p>
@@ -101,7 +101,7 @@ const DoctorEvaluationsPage: React.FC = () => {
                   <div className="text-xs text-muted-foreground w-full">
                      <p className="flex items-center gap-2">
                         <User className="w-3 h-3" />
-                        Paciente: <Link href={`/patients/${evaluation.patient.id}`} className="font-semibold text-primary hover:underline">{evaluation.patient.name}</Link>
+                        Paciente: <Link href={`/dashboard/patients/${evaluation.patient.id}`} className="font-semibold text-primary hover:underline">{evaluation.patient.name}</Link>
                      </p>
                      <p className="flex items-center gap-2 mt-1">
                         <Calendar className="w-3 h-3" /> 

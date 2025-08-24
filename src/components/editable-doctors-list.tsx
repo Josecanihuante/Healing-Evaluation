@@ -23,7 +23,7 @@ const EditableDoctorsList: React.FC<EditableDoctorsListProps> = ({ doctors }) =>
         <ul className="divide-y">
           {doctors.map((doctor, index) => (
             <li key={index}>
-              <Link href={`/doctors/${encodeURIComponent(doctor.name)}/evaluations`} passHref>
+              <Link href={`/dashboard/doctors/${encodeURIComponent(doctor.name)}/evaluations`} passHref>
                 <div className="flex justify-between items-center p-4 hover:bg-muted/50 cursor-pointer">
                   <div>
                     <p className="font-semibold">{doctor.name}</p>

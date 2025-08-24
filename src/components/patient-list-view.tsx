@@ -47,7 +47,7 @@ export default function PatientListView({ patients }: PatientListViewProps) {
         <h2 className="text-2xl font-semibold mb-2">Aún no hay pacientes</h2>
         <p className="text-muted-foreground mb-6">Comience añadiendo un nuevo paciente.</p>
         <Button asChild>
-          <Link href="/patients/add">
+          <Link href="/dashboard/patients/add">
             <PlusCircle className="mr-2 h-4 w-4" />
             Añadir Paciente
           </Link>
@@ -61,7 +61,7 @@ export default function PatientListView({ patients }: PatientListViewProps) {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold font-headline">Pacientes</h1>
         <Button asChild>
-          <Link href="/patients/add">
+          <Link href="/dashboard/patients/add">
             <PlusCircle className="mr-2 h-4 w-4" />
             Añadir Paciente
           </Link>
@@ -91,7 +91,7 @@ export default function PatientListView({ patients }: PatientListViewProps) {
                   </AlertDialogTrigger>
                   <AlertDialogContent onClick={(e) => e.stopPropagation()}>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>¿Está absolutamente seguro?</AlertDialogTitle>
+                      <AlertDialogTitle>¿Está absolutely seguro?</AlertDialogTitle>
                       <AlertDialogDescription>
                         Esta acción no se puede deshacer. Esto eliminará permanentemente el registro del paciente y todos sus datos asociados.
                       </AlertDialogDescription>
@@ -123,7 +123,7 @@ export default function PatientListView({ patients }: PatientListViewProps) {
             </CardContent>
             <CardFooter>
                <Button asChild variant="outline" className="w-full">
-                <Link href={`/patients/${patient.id}`}>
+                <Link href={`/dashboard/patients/${patient.id}`}>
                   Ver Detalles <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>

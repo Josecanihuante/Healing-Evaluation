@@ -68,7 +68,7 @@ export default function EditEvaluationForm({ patient, evaluation }: EditEvaluati
         title: "Evaluación Actualizada",
         description: `La evaluación ha sido actualizada exitosamente para ${patient.name}.`,
     });
-    router.push(`/patients/${patient.id}`);
+    router.push(`/dashboard/patients/${patient.id}`);
   }
 
   return (

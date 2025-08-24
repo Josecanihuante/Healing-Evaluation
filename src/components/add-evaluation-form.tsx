@@ -69,7 +69,7 @@ export default function AddEvaluationForm({ patient, evaluationType }: AddEvalua
         title: "Evaluación Añadida",
         description: `Una nueva evaluación de ${evaluationType === 'treatment' ? 'tratamiento' : 'cirugía'} ha sido guardada para ${patient.name}.`,
     });
-    router.push(`/patients/${patient.id}`);
+    router.push(`/dashboard/patients/${patient.id}`);
   }
 
   return (

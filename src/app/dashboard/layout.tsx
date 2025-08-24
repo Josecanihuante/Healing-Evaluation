@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/Logo';
 import { Home, PlusCircle, User, Users, Stethoscope } from 'lucide-react';
 
-export default function PatientsLayout({
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -30,7 +30,7 @@ export default function PatientsLayout({
         <SidebarHeader>
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="icon" className="shrink-0" asChild>
-              <Link href="/patients">
+              <Link href="/dashboard/patients">
                 <Logo className="size-5 text-primary" />
               </Link>
             </Button>
@@ -42,10 +42,10 @@ export default function PatientsLayout({
             <SidebarMenuItem>
               <SidebarMenuButton
                 asChild
-                isActive={pathname === '/patients'}
+                isActive={pathname === '/dashboard/patients'}
                 tooltip="Todos los Pacientes"
               >
-                <Link href="/patients">
+                <Link href="/dashboard/patients">
                   <Users />
                   <span>Pacientes</span>
                 </Link>
@@ -54,10 +54,10 @@ export default function PatientsLayout({
             <SidebarMenuItem>
               <SidebarMenuButton
                 asChild
-                isActive={pathname === '/patients/add'}
+                isActive={pathname === '/dashboard/patients/add'}
                 tooltip="Añadir Paciente"
               >
-                <Link href="/patients/add">
+                <Link href="/dashboard/patients/add">
                   <PlusCircle />
                   <span>Añadir Paciente</span>
                 </Link>
@@ -66,10 +66,10 @@ export default function PatientsLayout({
             <SidebarMenuItem>
               <SidebarMenuButton
                 asChild
-                isActive={pathname.startsWith('/doctors')}
+                isActive={pathname.startsWith('/dashboard/doctors')}
                 tooltip="Médicos"
               >
-                <Link href="/doctors">
+                <Link href="/dashboard/doctors">
                   <Stethoscope />
                   <span>Médicos</span>
                 </Link>

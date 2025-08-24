@@ -39,7 +39,7 @@ const PatientEditPage = () => {
         <h2 className="text-2xl font-semibold mb-2">Paciente no encontrado</h2>
         <p className="text-muted-foreground mb-6">No se pudo encontrar el paciente que intenta editar.</p>
         <Button asChild>
-          <Link href="/patients">
+          <Link href="/dashboard/patients">
             Volver a la Lista de Pacientes
           </Link>
         </Button>

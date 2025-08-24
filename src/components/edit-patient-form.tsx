@@ -85,7 +85,7 @@ export function EditPatientForm({ patient }: EditPatientFormProps) {
         title: "Paciente actualizado",
         description: `Los datos de ${values.name} se han actualizado correctamente.`,
       });
-      router.push(`/patients/${patient.id}`);
+      router.push(`/dashboard/patients/${patient.id}`);
     } catch (error) {
       console.error("Error al actualizar el paciente:", error);
       toast({

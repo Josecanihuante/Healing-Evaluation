@@ -99,7 +99,7 @@ const AddPatientFormContent = () => {
       title: "Paciente Añadido",
       description: `${data.name} ha sido añadido exitosamente.`,
     });
-    router.push('/patients');
+    router.push('/dashboard/patients');
   }
 
   const handleApplyDiagnoses = (diagnoses: string[]) => {
