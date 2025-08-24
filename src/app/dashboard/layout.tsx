@@ -42,24 +42,12 @@ export default function DashboardLayout({
             <SidebarMenuItem>
               <SidebarMenuButton
                 asChild
-                isActive={pathname === '/dashboard/patients'}
+                isActive={pathname.startsWith('/dashboard/patients')}
                 tooltip="Todos los Pacientes"
               >
                 <Link href="/dashboard/patients">
                   <Users />
                   <span>Pacientes</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                isActive={pathname === '/dashboard/patients/add'}
-                tooltip="Añadir Paciente"
-              >
-                <Link href="/dashboard/patients/add">
-                  <PlusCircle />
-                  <span>Añadir Paciente</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
