@@ -24,10 +24,10 @@ export default function MainSidebar() {
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" className="shrink-0" asChild>
             <Link href="/dashboard/patients">
-              <Logo className="size-5 text-primary" />
+              <Logo className="size-6 text-primary" />
             </Link>
           </Button>
-          <span className="font-headline text-lg font-semibold tracking-tight">Evaluación Clínica</span>
+          <span className="font-headline text-lg font-semibold tracking-tight text-gray-800">Evaluación Clínica</span>
         </div>
       </SidebarHeader>
       <SidebarContent>

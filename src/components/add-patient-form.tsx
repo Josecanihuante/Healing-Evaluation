@@ -126,10 +126,10 @@ const AddPatientFormContent = () => {
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <Card>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+        <Card className="shadow-sm border-gray-200/80">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold">Información del Paciente</CardTitle>
+            <CardTitle className="text-lg font-semibold text-gray-700">Información del Paciente</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <FormField
@@ -140,7 +140,7 @@ const AddPatientFormContent = () => {
                   <FormLabel>Nombre del Paciente</FormLabel>
                   <FormControl>
                     <div className="relative">
-                      <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Input placeholder="John Doe" {...field} className="pl-10" />
                     </div>
                   </FormControl>
@@ -157,7 +157,7 @@ const AddPatientFormContent = () => {
                   <FormLabel>Diagnóstico Primario</FormLabel>
                   <div className="flex gap-2 items-start">
                     <div className="relative flex-grow">
-                      <Stethoscope className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Stethoscope className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Input placeholder="ej., Diabetes Tipo 2" {...field} className="pl-10" />
                     </div>
                     <DiagnosisAssistantDialog
@@ -179,7 +179,7 @@ const AddPatientFormContent = () => {
                     <FormLabel>Tipo de Cama</FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <Bed className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Bed className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                         <Input placeholder="ej., UCI, General" {...field} className="pl-10" />
                       </div>
                     </FormControl>
@@ -204,9 +204,9 @@ const AddPatientFormContent = () => {
           </CardContent>
         </Card>
         
-        <Card>
+        <Card className="shadow-sm border-gray-200/80">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold">Personal Clínico</CardTitle>
+            <CardTitle className="text-lg font-semibold text-gray-700">Personal Clínico</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -218,7 +218,7 @@ const AddPatientFormContent = () => {
                     <FormLabel>Enfermero Encargado</FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                         <Input placeholder="Nombre del enfermero" {...field} className="pl-10" />
                       </div>
                     </FormControl>
@@ -234,7 +234,7 @@ const AddPatientFormContent = () => {
                     <FormLabel>Enfermero Supervisor</FormLabel>
                      <FormControl>
                       <div className="relative">
-                        <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                         <Input placeholder="Nombre del supervisor" {...field} className="pl-10" />
                       </div>
                     </FormControl>
@@ -248,22 +248,25 @@ const AddPatientFormContent = () => {
         </Card>
 
 
-        <div className="space-y-4">
-          <div className="flex justify-end">
+        <div className="space-y-6">
+          <div className="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
+            <p className="text-sm font-medium text-gray-600">Sugerencias de IA</p>
             <ComorbiditySuggestionDialog 
               diagnosis={diagnosis}
               existingComorbidities={formValues.comorbidities}
               onApplyComorbidities={handleApplyComorbidities}
             />
           </div>
-          <EditableList name="comorbidities" title="Comorbilidades" icon={ShieldPlus} />
-          <EditableList name="medications" title="Medicamentos" icon={Pill} />
-          <EditableList name="treatments" title="Tratamientos" icon={Activity} />
-          <EditableList name="surgicalProcedures" title="Procedimientos Quirúrgicos" icon={Stethoscope} />
-          <EditableList name="supplies" title="Suministros o Insumos" icon={Box} />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <EditableList name="comorbidities" title="Comorbilidades" icon={ShieldPlus} />
+            <EditableList name="medications" title="Medicamentos" icon={Pill} />
+            <EditableList name="treatments" title="Tratamientos" icon={Activity} />
+            <EditableList name="surgicalProcedures" title="Procedimientos Quirúrgicos" icon={Stethoscope} />
+            <EditableList name="supplies" title="Suministros o Insumos" icon={Box} />
+          </div>
         </div>
 
-        <div className="flex justify-end">
+        <div className="flex justify-end pt-4 border-t">
           <Button type="submit" size="lg">Guardar Paciente</Button>
         </div>
       </form>
@@ -279,7 +282,7 @@ export default function AddPatientForm() {
     }, []);
 
     if (!isClient) {
-        return null; // O un esqueleto/spinner
+        return null;
     }
 
     return <AddPatientFormContent />;

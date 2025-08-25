@@ -29,7 +29,7 @@ export default function PatientListView({ patients }: PatientListViewProps) {
   const { toast } = useToast();
 
   const handleDeletePatient = (e: React.MouseEvent, patientId: string, patientName: string) => {
-    e.stopPropagation(); // Evita que el click se propague al Card (y navegue a los detalles)
+    e.stopPropagation(); 
     e.preventDefault();
     
     dispatch({ type: 'REMOVE_PATIENT', payload: patientId });
@@ -42,10 +42,10 @@ export default function PatientListView({ patients }: PatientListViewProps) {
 
   if (patients.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-full p-8 text-center">
-        <User className="w-24 h-24 text-muted-foreground/50 mb-4" />
-        <h2 className="text-2xl font-semibold mb-2">Aún no hay pacientes</h2>
-        <p className="text-muted-foreground mb-6">Comience añadiendo un nuevo paciente.</p>
+      <div className="flex flex-col items-center justify-center h-full p-8 text-center bg-gray-50 rounded-lg">
+        <User className="w-24 h-24 text-gray-300 mb-4" />
+        <h2 className="text-2xl font-semibold mb-2 text-gray-700">Aún no hay pacientes</h2>
+        <p className="text-gray-500 mb-6">Comience añadiendo un nuevo registro de paciente.</p>
         <Button asChild>
           <Link href="/dashboard/patients/add">
             <PlusCircle className="mr-2 h-4 w-4" />
@@ -67,31 +67,31 @@ export default function PatientListView({ patients }: PatientListViewProps) {
           </Link>
         </Button>
       </div>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {patients.map((patient) => (
-          <Card key={patient.id} className="hover:shadow-lg transition-shadow duration-300 flex flex-col">
+          <Card key={patient.id} className="hover:shadow-xl transition-shadow duration-300 flex flex-col bg-white rounded-xl border border-gray-200/80">
              <CardHeader className="flex flex-row items-start gap-4">
-               <Avatar className="mt-1">
-                <AvatarFallback className="bg-primary/20 text-primary">
-                  {patient.name.charAt(0).toUpperCase()}
+               <Avatar className="mt-1 h-12 w-12 border">
+                <AvatarFallback className="bg-blue-50 text-blue-600 font-semibold">
+                  {patient.name.split(' ').map(n => n[0]).join('')}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1">
-                <CardTitle className="font-headline">{patient.name || 'Paciente sin nombre'}</CardTitle>
-                <CardDescription className="flex items-center gap-2 pt-1">
-                  <Stethoscope className="w-4 h-4" />
+                <CardTitle className="font-headline text-lg">{patient.name || 'Paciente sin nombre'}</CardTitle>
+                <CardDescription className="flex items-center gap-2 pt-1 text-sm text-gray-500">
+                  <Stethoscope className="w-4 h-4 text-gray-400" />
                   {patient.diagnosis || 'Sin diagnóstico'}
                 </CardDescription>
               </div>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                     <Button variant="ghost" size="icon" className="shrink-0" onClick={(e) => e.stopPropagation()}>
-                        <Trash2 className="w-4 h-4 text-destructive" />
+                     <Button variant="ghost" size="icon" className="shrink-0 text-gray-400 hover:text-destructive hover:bg-destructive/10 rounded-full" onClick={(e) => e.stopPropagation()}>
+                        <Trash2 className="w-4 h-4" />
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent onClick={(e) => e.stopPropagation()}>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>¿Está absolutely seguro?</AlertDialogTitle>
+                      <AlertDialogTitle>¿Está absolutamente seguro?</AlertDialogTitle>
                       <AlertDialogDescription>
                         Esta acción no se puede deshacer. Esto eliminará permanentemente el registro del paciente y todos sus datos asociados.
                       </AlertDialogDescription>
@@ -108,21 +108,21 @@ export default function PatientListView({ patients }: PatientListViewProps) {
                 </AlertDialog>
             </CardHeader>
             <CardContent className="flex-grow">
-              <div className="text-sm text-muted-foreground space-y-2">
-                <div className="flex items-center gap-2">
-                  <Bed className="w-4 h-4 text-primary" />
+              <div className="text-sm text-gray-600 space-y-3">
+                <div className="flex items-center gap-3">
+                  <Bed className="w-4 h-4 text-gray-400" />
                   <span>
-                    Cama: {patient.bedNumber || 'N/A'} ({patient.bedType || 'N/A'})
+                    Cama: <strong>{patient.bedNumber || 'N/A'}</strong> ({patient.bedType || 'N/A'})
                   </span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold text-foreground">{patient.evaluations.length}</span>
-                  <span>Evaluaciones</span>
+                <div className="flex items-center gap-3">
+                  <span className="font-bold text-lg text-primary">{patient.evaluations.length}</span>
+                  <span className="text-gray-500">Evaluaciones</span>
                 </div>
               </div>
             </CardContent>
-            <CardFooter>
-               <Button asChild variant="outline" className="w-full">
+            <CardFooter className="bg-gray-50/50 p-4 mt-4">
+               <Button asChild variant="ghost" className="w-full text-primary hover:text-primary hover:bg-blue-100/80">
                 <Link href={`/dashboard/patients/${patient.id}`}>
                   Ver Detalles <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>

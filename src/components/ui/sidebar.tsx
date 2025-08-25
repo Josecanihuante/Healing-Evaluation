@@ -72,8 +72,8 @@ const Sidebar = React.forwardRef<
       ref={ref}
       data-collapsed={isCollapsed}
       className={cn(
-        "fixed z-50 flex h-full flex-col border-r bg-background transition-all duration-300 ease-in-out",
-        "data-[collapsed=false]:w-60 data-[collapsed=true]:w-14",
+        "fixed z-50 flex h-full flex-col border-r bg-white transition-all duration-300 ease-in-out",
+        "data-[collapsed=false]:w-60 data-[collapsed=true]:w-16",
         className
       )}
       {...props}
@@ -93,8 +93,8 @@ const SidebarHeader = React.forwardRef<
       data-collapsed={isCollapsed}
       className={cn(
         "sticky top-0 flex items-center border-b",
-        "data-[collapsed=false]:gap-2 data-[collapsed=false]:px-3 data-[collapsed=true]:px-3.5",
-        "h-14",
+        "data-[collapsed=false]:gap-2 data-[collapsed=false]:px-4 data-[collapsed=true]:px-3.5",
+        "h-16",
         className
       )}
       {...props}
@@ -135,8 +135,8 @@ const SidebarFooter = React.forwardRef<
         data-collapsed={isCollapsed}
         className={cn(
           "flex items-center",
-          "h-14",
-          "data-[collapsed=false]:px-3 data-[collapsed=true]:justify-center data-[collapsed=true]:px-3.5"
+          "h-16",
+          "data-[collapsed=false]:px-4 data-[collapsed=true]:justify-center data-[collapsed=true]:px-3.5"
         )}
       >
         <SidebarMenuButton
@@ -161,7 +161,7 @@ const SidebarMenu = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "flex h-full flex-1 flex-col gap-1 overflow-x-hidden px-2 py-4",
+      "flex h-full flex-1 flex-col gap-1 overflow-x-hidden px-3 py-4",
       className
     )}
     {...props}
@@ -210,10 +210,10 @@ const SidebarMenuButton = React.forwardRef<
         data-collapsed={isCollapsed}
         variant="ghost"
         className={cn(
-          "h-10 w-full justify-start overflow-hidden whitespace-nowrap",
-          "data-[collapsed=false]:gap-2 data-[collapsed=false]:px-3",
+          "h-11 w-full justify-start overflow-hidden whitespace-nowrap text-gray-500 hover:text-primary hover:bg-primary/10",
+          "data-[collapsed=false]:gap-3 data-[collapsed=false]:px-3",
           "data-[collapsed=true]:justify-center data-[collapsed=true]:px-0",
-          "data-[active=true]:bg-accent data-[active=true]:text-accent-foreground",
+          "data-[active=true]:bg-primary/10 data-[active=true]:text-primary data-[active=true]:font-semibold",
           className
         )}
         asChild={asChild}
@@ -251,7 +251,7 @@ const SidebarInset = React.forwardRef<
       data-collapsed={isCollapsed}
       className={cn(
         "transition-all duration-300 ease-in-out",
-        "data-[collapsed=false]:ml-60 data-[collapsed=true]:ml-14",
+        "data-[collapsed=false]:ml-60 data-[collapsed=true]:ml-16",
         className
       )}
       {...props}
@@ -262,7 +262,6 @@ SidebarInset.displayName = "SidebarInset"
 
 // --- 6. EXPORTS ---
 
-// biome-ignore format: keep exports on separate lines for readability
 export {
   SidebarProvider,
   useSidebar,

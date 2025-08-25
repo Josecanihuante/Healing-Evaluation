@@ -70,11 +70,11 @@ const DoctorEvaluationsPage: React.FC = () => {
             const isTreatment = evaluation.type === 'treatment';
             const date = new Date(evaluation.dateEvaluated);
             return (
-              <Card key={evaluation.id} className="flex flex-col">
+              <Card key={evaluation.id} className="flex flex-col shadow-sm border-gray-200/80">
                 <CardHeader>
                   <div className="flex justify-between items-start">
                       <div>
-                          <Badge variant={isTreatment ? "default" : "secondary"} className={`${isTreatment ? "bg-accent text-accent-foreground" : "bg-blue-200 text-blue-800"}`}>
+                          <Badge variant={isTreatment ? "default" : "secondary"} className={`${isTreatment ? "bg-green-100 text-green-800 border-green-200" : "bg-blue-100 text-blue-800 border-blue-200"}`}>
                               {evaluation.type === 'treatment' ? 'TRATAMIENTO' : 'QUIRÚRGICO'}
                           </Badge>
                           <CardTitle className="mt-2 text-lg">{evaluation.procedureName}</CardTitle>
@@ -82,22 +82,22 @@ const DoctorEvaluationsPage: React.FC = () => {
                   </div>
                 </CardHeader>
                 <CardContent className="flex-grow">
-                  <p className="text-sm text-muted-foreground mb-4 line-clamp-3">{evaluation.writtenEvaluation}</p>
+                  <p className="text-sm text-gray-600 mb-4 line-clamp-3">{evaluation.writtenEvaluation}</p>
                   <div className="space-y-4">
                      <div>
                         <div className="flex justify-between items-center mb-1 text-xs">
-                            <span className="font-medium flex items-center gap-2"><Scale className="w-3 h-3"/>Calificación</span>
+                            <span className="font-medium flex items-center gap-2 text-gray-600"><Scale className="w-3 h-3"/>Calificación</span>
                             <span className="font-bold text-primary">{Math.round(evaluation.scaleRating * 100)}%</span>
                         </div>
                         <Progress value={evaluation.scaleRating * 100} className="h-2"/>
                     </div>
                     <div>
-                        <span className="font-medium text-xs flex items-center gap-2"><BarChart2 className="w-3 h-3"/>Valor</span>
-                        <p className="text-xl font-bold">{evaluation.continuousValue.toFixed(2)}</p>
+                        <span className="font-medium text-xs flex items-center gap-2 text-gray-600"><BarChart2 className="w-3 h-3"/>Valor</span>
+                        <p className="text-xl font-bold text-gray-800">{evaluation.continuousValue.toFixed(2)}</p>
                     </div>
                   </div>
                 </CardContent>
-                <CardFooter className="flex-col items-start pt-4 border-t">
+                <CardFooter className="flex-col items-start pt-4 border-t bg-gray-50/50">
                   <div className="text-xs text-muted-foreground w-full">
                      <p className="flex items-center gap-2">
                         <User className="w-3 h-3" />
@@ -114,10 +114,10 @@ const DoctorEvaluationsPage: React.FC = () => {
           })}
         </div>
       ) : (
-        <div className="text-center py-16 border-2 border-dashed rounded-lg">
-          <ListChecks className="mx-auto h-12 w-12 text-muted-foreground" />
-          <h3 className="mt-2 text-lg font-medium">Sin Evaluaciones</h3>
-          <p className="mt-1 text-sm text-muted-foreground">Este médico no tiene evaluaciones asociadas en ningún registro de paciente.</p>
+        <div className="text-center py-20 border-2 border-dashed rounded-lg bg-gray-50">
+          <ListChecks className="mx-auto h-12 w-12 text-gray-400" />
+          <h3 className="mt-2 text-lg font-medium text-gray-700">Sin Evaluaciones</h3>
+          <p className="mt-1 text-sm text-gray-500">Este médico no tiene evaluaciones asociadas en ningún registro de paciente.</p>
         </div>
       )}
     </div>
